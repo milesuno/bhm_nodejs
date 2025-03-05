@@ -17,7 +17,7 @@ const Audit = require("./models/audit");
 app.use(express.json());
 
 const OLLAMA_URL = "http://0.0.0.0:11434/api/generate";
-const MODEL = "mistral:latest"; // Change to a model you prefer
+const MODEL = "gemma"; // Change to a model you prefer
 
 let pendingArticle: any = null;
 let rejectedToday = false;
