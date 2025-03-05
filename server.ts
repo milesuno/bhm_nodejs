@@ -16,7 +16,7 @@ const Audit = require("./models/audit");
 
 app.use(express.json());
 
-const OLLAMA_URL = "http://localhost:11434/api/generate";
+const OLLAMA_URL = "http://127.0.0.1:11434/api/generate";
 const MODEL = "mistral"; // Change to a model you prefer
 
 let pendingArticle: any = null;
