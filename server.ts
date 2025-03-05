@@ -127,9 +127,9 @@ app.post(
 
 // Send approval email
 async function sendApprovalEmail(article: any) {
-  const approvalUrl = `http://localhost:8000/approve`;
-  const rejectUrl = `http://localhost:8000/reject`;
-  const rejectAllUrl = `http://localhost:8000/reject-all`;
+  const approvalUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io//approve`;
+  const rejectUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io//reject`;
+  const rejectAllUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io//reject-all`;
 
   const mailOptions = {
     from: '"BHM Writer"<milesoluku@gmail.com>',
@@ -196,8 +196,6 @@ app.post("/audit", async (req: any, res: any) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-
 
 // routes(app);
 
