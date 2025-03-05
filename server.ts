@@ -12,7 +12,7 @@ const app = express();
 const nodemailer = require("nodemailer");
 const puppeteer = require("puppeteer");
 const Article = require("./models/article");
-const Audit = require("./models/Audit");
+const Audit = require("./models/audit");
 
 app.use(express.json());
 
