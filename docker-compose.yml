@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+  nextjs-app:
+    build: .
+    container_name: nextjs-app
+    ports:
+      - "3000:3000"
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_data:
