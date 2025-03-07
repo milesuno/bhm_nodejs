@@ -8,10 +8,13 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
-
+    my-app:
+      build: .
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
+      container_name: nextjs-app
   nextjs-app:
     build: .
-    container_name: nextjs-app
     ports:
       - "3000:3000"
     environment:
