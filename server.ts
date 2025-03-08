@@ -46,7 +46,7 @@ async function getRecommendations(article_name: any) {
   // Fetch ALL Articles for DB
   let prevArticles;
   try {
-    const response = await axios.post(OLLAMA_URL, {
+    const response = await axios.post(process.env.OLLAMA_URL || OLLAMA_URL, {
       model: MODEL,
       prompt: `Based on the Current Article Title ${article_name} - suggest 5 relevant recommendations from these existing Articles ${prevArticles}.`,
       // prompt: `Given the user preferences: "${userInput}", suggest 5 relevant recommendations.`,
