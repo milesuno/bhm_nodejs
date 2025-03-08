@@ -16,7 +16,7 @@ services:
   nextjs-app:
     build: .
     ports:
-      - "3000:3000"
+      - "8000:8000"
     environment:
       - OLLAMA_URL=http://ollama:11434
     depends_on:
