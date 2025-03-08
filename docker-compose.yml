@@ -12,8 +12,9 @@ services:
       build: .
       extra_hosts:
         - "host.docker.internal:host-gateway"
-      container_name: nextjs-app
+  
   nextjs-app:
+    container_name: nextjs-app
     build: .
     ports:
       - "8000:8000"
