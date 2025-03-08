@@ -16,7 +16,7 @@ const Audit = require("./models/audit");
 
 app.use(express.json());
 
-const OLLAMA_URL = "http://172.17.0.1:11434/api/generate";
+const OLLAMA_URL = "http://127.0.0.1:11434/api/generate";
 const MODEL = "gemma:2b"; // Change to a model you prefer
 
 let pendingArticle: any = null;
