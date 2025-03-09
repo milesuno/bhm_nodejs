@@ -17,7 +17,7 @@ const Audit = require("./models/audit");
 app.use(express.json());
 
 const OLLAMA_URL =
-  process.env.OLLAMA_URL || "http://127.0.0.1:11434/api/generate";
+  process.env.OLLAMA_URL || "http://ollama:11434/api/generate";
 const MODEL = "gemma:2b"; // Change to a model you prefer
 console.log({ env: process.env.OLLAMA_URL, OLLAMA_URL });
 let pendingArticle: any = null;
@@ -53,7 +53,7 @@ async function getRecommendations(article_name: any) {
       // prompt: `Given the user preferences: "${userInput}", suggest 5 relevant recommendations.`,
       stream: false,
     });
-
+    console.log({ response });
     return response.data.response.trim();
   } catch (error) {
     console.error("Error:", error);
