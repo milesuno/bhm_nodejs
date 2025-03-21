@@ -190,7 +190,7 @@ app.get("/reject-all", (req: any, res: any) => {
 app.post("/audit", async (req: any, res: any) => {
   try {
     const { siteUrl } = req.body;
-    console.log({ siteUrl });
+    console.log({ siteUrl, body: req.body });
     if (!siteUrl) {
       return res.status(400).json({ error: "No site URL provided" });
     }
