@@ -190,12 +190,15 @@ app.get("/reject-all", (req: any, res: any) => {
 app.post("/audit", async (req: any, res: any) => {
   try {
     const { siteUrl } = req.body;
+    console.log({ siteUrl });
     if (!siteUrl) {
       return res.status(400).json({ error: "No site URL provided" });
     }
 
     const audit_metrics = await runAudit(siteUrl);
     const audit_social_proof = await auditReviews(siteUrl);
+
+    console.log({ audit_metrics, audit_social_proof });
 
     res.status(200).json({ audit_metrics, audit_social_proof });
   } catch (error: any) {
