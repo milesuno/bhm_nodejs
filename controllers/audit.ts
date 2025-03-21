@@ -4,7 +4,10 @@ import { auditReviews } from "./audit-social-proof"; // Import auditReviews
 export const runAudit = async (siteUrl: string) => {
   console.log(`🔍 Auditing site: ${siteUrl}`);
 
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   let document: any;
   let scriptUrls: string[] = []; // Define scriptUrls before using it
   const page = await browser.newPage();
