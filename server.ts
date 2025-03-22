@@ -199,12 +199,14 @@ app.get("/reject-all", (req: any, res: any) => {
 
 app.post("/audit", async (req: any, res: any) => {
   try {
-    const { siteUrl } = req.body;
+    let { siteUrl } = req.body;
     console.log({ siteUrl, body: req.body, req });
     if (!siteUrl) {
       return res.status(400).json({ error: "No site URL provided" });
     }
 
+    if (!siteUrl.contains("http")) siteUrl = "https://" + siteUrl;
+    
     const audit_metrics = await runAudit(siteUrl);
     const audit_social_proof = await auditReviews(siteUrl);
 
