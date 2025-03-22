@@ -2,6 +2,7 @@ import { runAudit } from "./controllers/audit";
 import { auditReviews } from "./controllers/audit-social-proof";
 import asyncMiddleware from "./middleware/asyncMiddleware";
 import routes from "./routes";
+import cors from "cors";
 
 require("dotenv").config();
 const express = require("express");
@@ -18,9 +19,18 @@ app.use(express.json());
 
 app.use((req: any, res: any, next: any) => {
   res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Expose-Headers", "x-auth-token");
+  res.header("Access-Control-Expose-Headers", "x-auth-token");
   next();
 });
+
+app.use(
+  cors({
+    origin: "*", // Change to your frontend domain
+    credentials: true,
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization",
+  })
+);
 
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://ollama:11434/api/generate";
 const MODEL = "gemma:2b"; // Change to a model you prefer
@@ -190,7 +200,7 @@ app.get("/reject-all", (req: any, res: any) => {
 app.post("/audit", async (req: any, res: any) => {
   try {
     const { siteUrl } = req.body;
-    console.log({ siteUrl, body: req.body });
+    console.log({ siteUrl, body: req.body, req });
     if (!siteUrl) {
       return res.status(400).json({ error: "No site URL provided" });
     }
