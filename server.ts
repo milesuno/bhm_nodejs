@@ -205,8 +205,8 @@ app.post("/audit", async (req: any, res: any) => {
       return res.status(400).json({ error: "No site URL provided" });
     }
 
-    if (!siteUrl.contains("http")) siteUrl = "https://" + siteUrl;
-    
+    if (!siteUrl.includes("http")) siteUrl = "https://" + siteUrl;
+
     const audit_metrics = await runAudit(siteUrl);
     const audit_social_proof = await auditReviews(siteUrl);
 
