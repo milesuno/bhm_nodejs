@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  my-nextjs-app:
+  nextjs-app:
     build: .
     environment:
       - OLLAMA_URL=http://ollama:11434
@@ -14,9 +14,3 @@ services:
     container_name: ollama
     ports:
       - "11434:11434"
-    networks:
-      - mynetwork
-
-networks:
-  mynetwork:
-    driver: bridge
