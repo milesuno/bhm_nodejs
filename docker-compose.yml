@@ -10,10 +10,14 @@ services:
       - OLLAMA_API_URL=http://ollama:11434
     networks:
       - app-network
+    expose:
+      - "PORT"
 
   ollama:
     image: ollama/ollama
     container_name: ollama
+    expose:
+      - "11434"
     ports:
       - "11434:11434"
     networks:
