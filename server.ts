@@ -32,7 +32,8 @@ app.use(
   })
 );
 
-const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434/api/generate";
+const OLLAMA_URL =
+  process.env.OLLAMA_URL || "http://127.0.0.1:11434/api/generate";
 const MODEL = "gemma:2b"; // Change to a model you prefer
 console.log({ env: process.env.OLLAMA_URL, OLLAMA_URL });
 let pendingArticle: any = null;
