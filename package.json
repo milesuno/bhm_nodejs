@@ -30,7 +30,6 @@
   },
   "name": "bhm_nodejs",
   "version": "1.0.0",
-  "main": "adobe-rejection-extention.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server:dev": "npx nodenv -E dev.env --exec ts-node server.ts",
