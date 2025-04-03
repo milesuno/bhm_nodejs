@@ -1,31 +1,15 @@
-version: "3.8"
-
 services:
-  next-js:
-    build: .
-    container_name: pcc0cc08080cg0go0kwokkw8-183647054648
-    depends_on:
-      - ollama
-    environment:
-      - OLLAMA_API_URL=http://ollama:11434
-    networks:
-      - app-network
-    expose:
-      - "PORT"
-
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
-    expose:
-      - "11434"
+  my-service:
+    image: my-container
+    container_name: my-container
+    restart: unless-stopped
     ports:
-      - "8000:8000"
-      - "11434:11434"
-      - "443:443"
-      - "22:22"
-
+      - "8000:8000"  # Your app's port
+      - "11434:11434"  # Ollama's port exposed
+    environment:
+      - OLLAMA_URL=http://127.0.0.1:11434
     networks:
-      - app-network
+      - coolify
 
 networks:
   coolify:
