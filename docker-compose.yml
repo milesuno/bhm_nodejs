@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  pcc0cc08080cg0go0kwokkw8-183647054648:
+  next-js:
     build: .
     container_name: pcc0cc08080cg0go0kwokkw8-183647054648
     depends_on:
