@@ -1,28 +1,49 @@
-version: "3.8"
-
 services:
   pcc0cc08080cg0go0kwokkw8-183647054648:
-    build: .
+    image: "pcc0cc08080cg0go0kwokkw8:9ea0bd60a4a4c582a38392bf3ad7306bc8efa645"
     container_name: pcc0cc08080cg0go0kwokkw8-183647054648
-    depends_on:
-      - ollama
-    environment:
-      - OLLAMA_API_URL=http://ollama:11434
-    networks:
-      - app-network
-    expose:
-      - "PORT"
-
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
-    expose:
-      - "11434"
+    restart: unless-stopped
     ports:
+      - "8000:8000"
       - "11434:11434"
+      - "443:443"
+      - "22:22"
     networks:
-      - app-network
-
+      - coolify
+    mem_limit: "0"
+    memswap_limit: "0"
+    mem_swappiness: 60
+    mem_reservation: "0"
+    cpus: 0.0
+    cpu_shares: 1024
+    env_file:
+      - .env
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.gzip.compress=true
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      - traefik.http.routers.http-0-pcc0cc08080cg0go0kwokkw8.entryPoints=http
+      - traefik.http.routers.http-0-pcc0cc08080cg0go0kwokkw8.middlewares=gzip
+      - "traefik.http.routers.http-0-pcc0cc08080cg0go0kwokkw8.rule=Host(`pcc0cc08080cg0go0kwokkw8.31.187.72.122.sslip.io`) && PathPrefix(`/`)"
+      - traefik.http.routers.http-0-pcc0cc08080cg0go0kwokkw8.service=http-0-pcc0cc08080cg0go0kwokkw8
+      - traefik.http.services.http-0-pcc0cc08080cg0go0kwokkw8.loadbalancer.server.port=8000
+      - "caddy_0.encode=zstd gzip"
+      - "caddy_0.handle_path.0_reverse_proxy={{upstreams 8000}}"
+      - "caddy_0.handle_path=/*"
+      - caddy_0.header=-Server
+      - "caddy_0.try_files={path} /index.html /index.php"
+      - "caddy_0=http://pcc0cc08080cg0go0kwokkw8.31.187.72.122.sslip.io"
+      - caddy_ingress_network=coolify
+      - coolify.managed=true
+      - coolify.version=4.0.0-beta.400
+      - coolify.applicationId=1
+      - coolify.type=application
+      - coolify.name=pcc0cc08080cg0go0kwokkw8
+      - coolify.resourceName=milesunobhm-nodejsmain-pcc0cc08080cg0go0kwokkw8
+      - coolify.projectName=business-health-metrics
+      - coolify.serviceName=milesunobhm-nodejsmain-pcc0cc08080cg0go0kwokkw8
+      - coolify.environmentName=production
+      - coolify.pullRequestId=0
 networks:
   coolify:
     external: true
