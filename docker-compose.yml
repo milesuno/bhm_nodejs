@@ -11,6 +11,3 @@ services:
     networks:
       - coolify
 
-networks:
-  coolify:
-    external: true
