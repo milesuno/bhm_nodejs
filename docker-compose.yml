@@ -1,6 +1,6 @@
 services:
   my-service:
-    image: my-container
+    build: .
     container_name: my-container
     restart: unless-stopped
     network_mode: "host"
