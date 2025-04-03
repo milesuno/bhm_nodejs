@@ -3,9 +3,7 @@ services:
     image: my-container
     container_name: my-container
     restart: unless-stopped
-    ports:
-      - "8000:8000"  # Your app's port
-      - "11434:11434"  # Ollama's port exposed
+    network_mode: "host"
     environment:
       - OLLAMA_URL=http://127.0.0.1:11434
     networks:
