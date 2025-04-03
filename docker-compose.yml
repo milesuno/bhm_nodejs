@@ -5,10 +5,11 @@ services:
     restart: unless-stopped
     network_mode: "host"
     environment:
-      - OLLAMA_URL=http://127.0.0.1:11434
+    - OLLAMA_URL=http://host.docker.internal:11434
     networks:
       - coolify
-
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 networks:
   coolify:
     external: true
