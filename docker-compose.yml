@@ -10,3 +10,7 @@ services:
       - OLLAMA_URL=http://host.docker.internal:11434
     networks:
       - coolify
+
+networks:
+  coolify:
+    external: true
