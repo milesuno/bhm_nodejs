@@ -9,3 +9,7 @@ services:
       - OLLAMA_URL=http://host.docker.internal:11434
     ports:
       - "8000:8000"
+
+    networks:
+      coolify:
+        external: true
