@@ -7,10 +7,4 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - OLLAMA_URL=http://host.docker.internal:11434
-    networks:
-      - coolify
-
-networks:
-  coolify:
-    external: true
+      - OLLAMA_URL=http://127.0.0.1:11434
