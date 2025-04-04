@@ -1,0 +1,21 @@
+# Use the official Node.js image
+FROM node:18
+
+# Set the working directory
+WORKDIR /dist
+
+# Copy package.json and install dependencies
+COPY package.json package-lock.json ./
+RUN npm install --only=production
+
+# Copy the rest of the app
+COPY . .
+
+# Expose required ports (only if not using host mode)
+EXPOSE 8000
+
+# Set environment variables (this can also be done in Coolify settings)
+ENV OLLAMA_URL="http://ollama:11434"
+
+# Start the app
+CMD ["node", "server.js"]
