@@ -94,6 +94,7 @@ async function generateArticleWebMetrics() {
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
             stream: false,
         });
+        console.log({ response });
         return response.data.response.trim();
     }
     catch (error) {

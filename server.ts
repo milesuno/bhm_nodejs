@@ -103,6 +103,8 @@ async function generateArticleWebMetrics() {
       stream: false,
     });
 
+    console.log({ response });
+
     return response.data.response.trim();
   } catch (error) {
     console.error("Error:", error);
