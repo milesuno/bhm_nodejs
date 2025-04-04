@@ -4,9 +4,9 @@ services:
     container_name: pcc0cc08080cg0go0kwokkw8
     restart: unless-stopped
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:31.187.72.122"
     environment:
-      - OLLAMA_URL=http://host.docker.internal:11434
+      - OLLAMA_URL=http://31.187.72.122:11434
     ports:
       - "8000:8000"
       - "11434:11434" # Expose port for Ollama
