@@ -3,11 +3,11 @@ networks:
     driver: bridge
 
 services:
-  ollama:
-    container_name: j8okgsso4wkoc04so004k8ws
-    image: j8okgsso4wkoc04so004k8ws:62a83d5029b2011d32c33927d5b41eddb0a5d02f
+  ollama_container:
+    image: j8okgsso4wkoc04so004k8ws # Replace 'ollama_image' with the actual image name for your Ollama container
+    container_name: ollama_container # You can change this name if you prefer something else
     networks:
-      - my_network
+      - my_network # This ensures that your Ollama container is on the same network as your Node.js app
 
   my-service:
     build: .
