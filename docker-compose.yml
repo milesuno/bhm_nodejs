@@ -6,7 +6,7 @@ services:
     extra_hosts:
       - "host.docker.internal:31.187.72.254"
     environment:
-      - OLLAMA_URL=http://31.187.72.254:11434
+      - OLLAMA_URL=http://host.docker.internal:11434  # Adjust according to your environment
     ports:
       - "8000:8000"
       - "11434:11434" # Expose port for Ollama
