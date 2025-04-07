@@ -1,18 +1,18 @@
+services:
+  my-service:
+  build: .
+  container_name: pcc0cc08080cg0go0kwokkw8
+  environment:
+    - OLLAMA_URL=http://ollama_container:11434 # Use container name for communication
+  networks:
+    - my_network
+
+ollama_container:
+  image: j8okgsso4wkoc04so004k8ws # Replace 'ollama_image' with the actual image name for your Ollama container
+  container_name: ollama_container # You can change this name if you prefer something else
+  networks:
+    - my_network # This ensures that your Ollama container is on the same network as your Node.js app
+
 networks:
   my_network:
     driver: bridge
-
-services:
-  ollama_container:
-    image: j8okgsso4wkoc04so004k8ws # Replace 'ollama_image' with the actual image name for your Ollama container
-    container_name: ollama_container # You can change this name if you prefer something else
-    networks:
-      - my_network # This ensures that your Ollama container is on the same network as your Node.js app
-
-  my-service:
-    build: .
-    container_name: pcc0cc08080cg0go0kwokkw8
-    environment:
-      - OLLAMA_URL=http://j8okgsso4wkoc04so004k8ws:11434 # Use container name for communication
-    networks:
-      - my_network
