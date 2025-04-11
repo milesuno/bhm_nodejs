@@ -9,8 +9,18 @@ services:
     - my_network
 
 ollama_container:
-  image: j8okgsso4wkoc04so004k8ws # Replace 'ollama_image' with the actual image name for your Ollama container
-  container_name: 74627c3b10099d873a3a853d022d487dd53369c0b84ecd4c17a31f6ddf3620be # You can change this name if you prefer something else
+  ollama:
+  image: ollama/ollama
+  container_name: ollama_container
+  ports:
+    - "11434:11434"
+  volumes:
+    - ollama-data:/root/.ollama
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:11434"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
   networks:
     - my_network # This ensures that your Ollama container is on the same network as your Node.js app
 
