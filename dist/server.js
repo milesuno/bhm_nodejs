@@ -62,7 +62,7 @@ async function getRecommendations(article_name) {
             // prompt: `Given the user preferences: "${userInput}", suggest 5 relevant recommendations.`,
             stream: false,
         });
-        console.log({ response });
+        console.log("OLLAMA RESPONSE", { response });
         return response.data.response.trim();
     }
     catch (error) {
@@ -110,10 +110,10 @@ async function generateArticleWebMetrics() {
 //     },
 //     body: JSON.stringify({
 //       model: MODEL,
-//       prompt: `You are a knowledgeable professional Data Engineer, Data Analyst, Web Analytics Engineer. 
-//     Write a well-structured, engaging, and informative article, this article should be about: ${topics[randIndex]}. 
-//     Include an introduction, main points, and a conclusion. 
-//     Use examples if required for explaining complex topics. 
+//       prompt: `You are a knowledgeable professional Data Engineer, Data Analyst, Web Analytics Engineer.
+//     Write a well-structured, engaging, and informative article, this article should be about: ${topics[randIndex]}.
+//     Include an introduction, main points, and a conclusion.
+//     Use examples if required for explaining complex topics.
 //     Keep the length to a 10 mins read.`,
 //       stream: false,
 //     }),
