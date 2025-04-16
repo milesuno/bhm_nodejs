@@ -81,54 +81,54 @@ async function generateArticleWebMetrics() {
         "Web Analytics Roles: Data Engineer, Data Analyst, Web Analytics Engineer",
     ];
     let randIndex = Number((Math.random() * topics.length).toFixed(0));
-    //   try {
-    //     const response = await axios.post(OLLAMA_URL, {
-    //       model: MODEL,
-    //       prompt:
-    //         // Makes sure that topic is not in previous articles created ${prevArticles}.
-    //         `You are a knowledgable professional Data Engineer, Data Analyst, Web Analytics Engineer.
-    //       Write a well-structured, engaging, and informative article, this article should be about:${topics[randIndex]}.
-    //       Include an introduction, main points, and a conclusion.
-    //       Use examples if required for explaining complex topics.
-    //       Keep the length to a 10 mins read.`,
-    //       // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
-    //       stream: false,
-    //     });
-    //     console.log({ response });
-    //     return response.data.response.trim();
-    //   } catch (error) {
-    //     console.error("Error:", error);
-    //     return "An error occurred while generating the article.";
-    //   }
-    // }
     try {
-        const response = await fetch(OLLAMA_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                model: MODEL,
-                prompt: `You are a knowledgeable professional Data Engineer, Data Analyst, Web Analytics Engineer. 
-      Write a well-structured, engaging, and informative article, this article should be about: ${topics[randIndex]}. 
-      Include an introduction, main points, and a conclusion. 
-      Use examples if required for explaining complex topics. 
-      Keep the length to a 10 mins read.`,
-                stream: false,
-            }),
+        const response = await axios.post(OLLAMA_URL, {
+            model: MODEL,
+            prompt: 
+            // Makes sure that topic is not in previous articles created ${prevArticles}.
+            `You are a knowledgable professional Data Engineer, Data Analyst, Web Analytics Engineer.
+        Write a well-structured, engaging, and informative article, this article should be about:${topics[randIndex]}.
+        Include an introduction, main points, and a conclusion.
+        Use examples if required for explaining complex topics.
+        Keep the length to a 10 mins read.`,
+            // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
+            stream: false,
         });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log({ data });
-        return data.response.trim();
+        console.log({ response });
+        return response.data.response.trim();
     }
     catch (error) {
         console.error("Error:", error);
         return "An error occurred while generating the article.";
     }
 }
+// try {
+//   const response = await fetch(OLLAMA_URL, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       model: MODEL,
+//       prompt: `You are a knowledgeable professional Data Engineer, Data Analyst, Web Analytics Engineer. 
+//     Write a well-structured, engaging, and informative article, this article should be about: ${topics[randIndex]}. 
+//     Include an introduction, main points, and a conclusion. 
+//     Use examples if required for explaining complex topics. 
+//     Keep the length to a 10 mins read.`,
+//       stream: false,
+//     }),
+//   });
+//   if (!response.ok) {
+//     throw new Error(`HTTP error! Status: ${response.status}`);
+//   }
+//   const data = await response.json();
+//   console.log({ data });
+//   return data.response.trim();
+// } catch (error) {
+//   console.error("Error:", error);
+//   return "An error occurred while generating the article.";
+// }
+// }
 // API endpoint to generate articles
 //TODO: AUTH user
 app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) => {
