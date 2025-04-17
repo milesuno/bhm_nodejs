@@ -170,7 +170,8 @@ async function sendApprovalEmail(article) {
     await transporter.sendMail(mailOptions);
 }
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("* * * * *", async () => {
+    console.log("[CRON] Running scheduled task at midnight");
     if (rejectedToday)
         return; // Skip if rejected all for the day
     const content = await generateArticleWebMetrics();

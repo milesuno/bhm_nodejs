@@ -196,7 +196,8 @@ async function sendApprovalEmail(article: any) {
 }
 
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("* * * * *", async () => {
+  console.log("[CRON] Running scheduled task at midnight");
   if (rejectedToday) return; // Skip if rejected all for the day
   const content = await generateArticleWebMetrics();
   pendingArticle = { title: content.article.split(":")[1], content };
