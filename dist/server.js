@@ -175,7 +175,9 @@ cron.schedule("* * * * *", async () => {
     if (rejectedToday)
         return; // Skip if rejected all for the day
     const content = await generateArticleWebMetrics();
+    console.log("[CRON] Running scheduled task at midnight 2", content);
     pendingArticle = { title: content.article.split(":")[1], content };
+    console.log("[CRON] Running scheduled task at midnight 3", pendingArticle);
     await sendApprovalEmail(pendingArticle);
 });
 // Approve Article
