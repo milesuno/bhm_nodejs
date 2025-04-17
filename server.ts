@@ -205,6 +205,10 @@ cron.schedule("* * * * *", async () => {
   pendingArticle = { title: content.article.split(":")[1], content };
   console.log("[CRON] Running scheduled task at midnight 3", pendingArticle);
   await sendApprovalEmail(pendingArticle);
+  console.log(
+    "[CRON] Running scheduled task at midnight 4 - EMAIL SENT",
+    pendingArticle
+  );
 });
 
 // Approve Article
