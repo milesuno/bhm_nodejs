@@ -153,6 +153,7 @@ app.post("/recommend", (0, asyncMiddleware_1.default)(async (req, res) => {
 }));
 // Send approval email
 async function sendApprovalEmail(article) {
+    console.log("SENDING APPROVAL EMAIL");
     const approvalUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/approve`;
     const rejectUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject`;
     const rejectAllUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject-all`;
@@ -168,6 +169,7 @@ async function sendApprovalEmail(article) {
            <a href='${rejectAllUrl}'>🚫 Reject All</a>`,
     };
     await transporter.sendMail(mailOptions);
+    console.log("SENT APPROVAL EMAIL");
 }
 // Daily Cron Job (Runs at Midnight)
 cron.schedule("* * * * *", async () => {
