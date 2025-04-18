@@ -172,7 +172,7 @@ async function sendApprovalEmail(article) {
     console.log("SENT APPROVAL EMAIL");
 }
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
     console.log("[CRON] Running scheduled task at midnight", rejectedToday);
     if (rejectedToday)
         return; // Skip if rejected all for the day
