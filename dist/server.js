@@ -153,7 +153,10 @@ app.post("/recommend", (0, asyncMiddleware_1.default)(async (req, res) => {
 }));
 // Send approval email
 async function sendApprovalEmail(article) {
-    console.log("SENDING APPROVAL EMAIL", article);
+    console.log("SENDING APPROVAL EMAIL", article, {
+        title: article.title,
+        content: article.content,
+    });
     const approvalUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/approve`;
     const rejectUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject`;
     const rejectAllUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject-all`;
@@ -161,9 +164,8 @@ async function sendApprovalEmail(article) {
         from: '"BHM Writer"<milesoluku@gmail.com>',
         to: "milesoluku@gmail.com",
         subject: "Daily Article Approval - BHM",
-        html: `<h1>${article.title}</h1>${article.content
-            .split("\n")
-            .map((p) => "<p>" + { p } + "</p>")}
+        html: `<h1>${article.title}</h1>
+    ${article.content.split("\n").map((p) => "<p>" + { p } + "</p>")}
            <a href='${approvalUrl}' style='margin-right:10px;'>✅ Approve</a>
            <a href='${rejectUrl}' style='margin-right:10px;'>❌ Reject</a>
            <a href='${rejectAllUrl}'>🚫 Reject All</a>`,
@@ -172,7 +174,7 @@ async function sendApprovalEmail(article) {
     console.log("SENT APPROVAL EMAIL");
 }
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("*/5 * * * *", async () => {
     console.log("[CRON] Running scheduled task at midnight", rejectedToday);
     if (rejectedToday)
         return; // Skip if rejected all for the day
