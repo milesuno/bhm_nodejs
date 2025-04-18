@@ -153,7 +153,7 @@ app.post("/recommend", (0, asyncMiddleware_1.default)(async (req, res) => {
 }));
 // Send approval email
 async function sendApprovalEmail(article) {
-    console.log("SENDING APPROVAL EMAIL");
+    console.log("SENDING APPROVAL EMAIL", article);
     const approvalUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/approve`;
     const rejectUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject`;
     const rejectAllUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject-all`;
@@ -179,7 +179,7 @@ cron.schedule("* * * * *", async () => {
     console.log("[CRON] Running scheduled task at midnight 1");
     const content = await generateArticleWebMetrics();
     console.log("[CRON] Running scheduled task at midnight 2", pendingArticle, content);
-    pendingArticle = { title: content.article.split(":")[1], content };
+    pendingArticle = { title: content.split(":")[1], content };
     console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
     await sendApprovalEmail(pendingArticle);
     console.log("[CRON] Running scheduled task at midnight 4 - EMAIL SENT", pendingArticle);
