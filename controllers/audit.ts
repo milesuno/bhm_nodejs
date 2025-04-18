@@ -24,9 +24,52 @@ export const runAudit = async (siteUrl: string) => {
   //   }
   // });
   // console.log(scriptUrls);
+  async function waitForNetworkIdle(
+    page: any,
+    timeout = 10000,
+    idleTime = 500
+  ) {
+    let timeoutHandle: NodeJS.Timeout;
+    let resolveFunc = () => {};
+
+    const promise = new Promise<void>((resolve) => (resolveFunc = resolve));
+
+    let activeRequests = 0;
+    let lastChange = Date.now();
+
+    function checkIdle() {
+      if (activeRequests === 0 && Date.now() - lastChange > idleTime) {
+        clearTimeout(timeoutHandle);
+        resolveFunc();
+      } else {
+        setTimeout(checkIdle, 100);
+      }
+    }
+
+    page.on("request", () => {
+      activeRequests++;
+      lastChange = Date.now();
+    });
+
+    page.on("requestfinished", () => {
+      activeRequests--;
+      lastChange = Date.now();
+    });
+
+    page.on("requestfailed", () => {
+      activeRequests--;
+      lastChange = Date.now();
+    });
+
+    timeoutHandle = setTimeout(resolveFunc, timeout); // fallback in case idle never occurs
+    checkIdle();
+
+    return promise;
+  }
 
   try {
-    await page.goto(siteUrl, { waitUntil: "networkidle2", timeout: 15000 });
+    await page.goto(siteUrl);
+    await waitForNetworkIdle(page, 10000, 500);
 
     // Scan for tracking scripts
     const trackingScripts = await page.evaluate(() => {
