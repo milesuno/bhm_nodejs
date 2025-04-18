@@ -165,7 +165,7 @@ async function sendApprovalEmail(article) {
         to: "milesoluku@gmail.com",
         subject: "Daily Article Approval - BHM",
         html: `<h1>${article.title}</h1>
-    ${article.content.split("\n").map((p) => "<p>" + { p } + "</p>")}
+    <section>${article.content}</section>
            <a href='${approvalUrl}' style='margin-right:10px;'>✅ Approve</a>
            <a href='${rejectUrl}' style='margin-right:10px;'>❌ Reject</a>
            <a href='${rejectAllUrl}'>🚫 Reject All</a>`,
