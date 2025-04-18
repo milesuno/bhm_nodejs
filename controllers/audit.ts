@@ -26,7 +26,7 @@ export const runAudit = async (siteUrl: string) => {
   // console.log(scriptUrls);
 
   try {
-    await page.goto(siteUrl, { waitUntil: "networkidle2" });
+    await page.goto(siteUrl, { waitUntil: "networkidle2", timeout: 15000 });
 
     // Scan for tracking scripts
     const trackingScripts = await page.evaluate(() => {

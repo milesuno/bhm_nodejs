@@ -27,7 +27,7 @@ const runAudit = async (siteUrl) => {
     // });
     // console.log(scriptUrls);
     try {
-        await page.goto(siteUrl, { waitUntil: "networkidle2" });
+        await page.goto(siteUrl, { waitUntil: "networkidle2", timeout: 15000 });
         // Scan for tracking scripts
         const trackingScripts = await page.evaluate(() => {
             const scripts = [...document.scripts].map((script) => script.src);
