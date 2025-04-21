@@ -91,8 +91,8 @@ async function generateArticleWebMetrics() {
 
   let randIndex = Number((Math.random() * topics.length).toFixed(0));
   const queryEmbedding = await embed(`${topics[randIndex]}`);
-  
-// BUG: Will need data sources before new articles can be reliably generated
+
+  // BUG: Will need data sources before new articles can be reliably generated
   const results = await WebDoc.aggregate([
     {
       $vectorSearch: {
@@ -119,7 +119,7 @@ Context:
 ${context}
 
 Prompt:
-${"implementing Adobe DMX"}
+${topics[randIndex]}
 `;
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {

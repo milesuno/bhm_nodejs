@@ -109,7 +109,7 @@ Context:
 ${context}
 
 Prompt:
-${"implementing Adobe DMX"}
+${topics[randIndex]}
 `;
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
