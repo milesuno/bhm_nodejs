@@ -16,6 +16,7 @@ const app = express();
 const nodemailer = require("nodemailer");
 const puppeteer = require("puppeteer");
 const Article = require("./models/article");
+const WebDoc = require("./models/doc-ref");
 const Audit = require("./models/audit");
 app.use(express.json());
 app.use((req, res, next) => {
@@ -31,7 +32,7 @@ app.use((0, cors_1.default)({
 }));
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434/api/generate";
 const MODEL = process.env.MODEL || "gemma:2b"; // Change to a model you prefer
-console.log({ env: process.env.OLLAMA_URL, OLLAMA_URL });
+console.log({ env: process.env.OLLAMA_URL, OLLAMA_URL, MODEL });
 let pendingArticle = null;
 let rejectedToday = false;
 const transporter = nodemailer.createTransport({
@@ -81,16 +82,40 @@ async function generateArticleWebMetrics() {
         "Web Analytics Roles: Data Engineer, Data Analyst, Web Analytics Engineer",
     ];
     let randIndex = Number((Math.random() * topics.length).toFixed(0));
+    const queryEmbedding = await embed(`${topics[randIndex]}`);
+    // BUG: Will need data sources before new articles can be reliably generated
+    const results = await WebDoc.aggregate([
+        {
+            $vectorSearch: {
+                queryVector: queryEmbedding,
+                path: "embedding",
+                numCandidates: 100,
+                limit: 5,
+                index: "embed", // replace with your Atlas vector index name
+            },
+        },
+    ]);
+    const context = results.map((doc) => doc.document).join("\n\n");
+    console.log({ results, context, queryEmbedding });
+    const prompt = `
+  You are a knowledgable professional Data Engineer, Data Analyst, Web Analytics Engineer.        
+        
+  Write a well-structured, engaging, and informative article based on this context and prompt.
+  Include an introduction, main points, and a conclusion.
+  Use examples if required for explaining complex topics.
+  Keep the length to a 10 mins read.
+
+Context:
+${context}
+
+Prompt:
+${"implementing Adobe DMX"}
+`;
     try {
-        const response = await axios.post(OLLAMA_URL, {
+        const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
             model: MODEL,
-            prompt: 
-            // Makes sure that topic is not in previous articles created ${prevArticles}.
-            `You are a knowledgable professional Data Engineer, Data Analyst, Web Analytics Engineer.
-        Write a well-structured, engaging, and informative article, this article should be about:${topics[randIndex]}.
-        Include an introduction, main points, and a conclusion.
-        Use examples if required for explaining complex topics.
-        Keep the length to a 10 mins read.`,
+            prompt,
+            // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
             stream: false,
         });
@@ -101,6 +126,31 @@ async function generateArticleWebMetrics() {
         console.error("Error:", error);
         return "An error occurred while generating the article.";
     }
+}
+async function crawlWebsite(url) {
+    const browser = await puppeteer.launch({ headless: "new" });
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: "networkidle2" });
+    const title = await page.title();
+    const text = await page.evaluate(() => document.body.innerText.replace(/\s+/g, " ").trim());
+    await browser.close();
+    return { title, text };
+}
+async function summarize(text) {
+    const prompt = `Extract 5 to 10 key factual points from the following text:\n\n"${text}"\n\nEach of the fact be bullet points only.`;
+    const res = await axios.post(`${OLLAMA_URL}/api/generate`, {
+        model: "mistral",
+        prompt,
+        stream: false,
+    });
+    return res.data.response.trim();
+}
+async function embed(text) {
+    const res = await axios.post(`${OLLAMA_URL}/api/embeddings`, {
+        model: "nomic-embed-text",
+        prompt: text,
+    });
+    return res.data.embedding;
 }
 // try {
 //   const response = await fetch(OLLAMA_URL, {
@@ -130,6 +180,32 @@ async function generateArticleWebMetrics() {
 // }
 // }
 // API endpoint to generate articles
+app.post("/scrape", (0, asyncMiddleware_1.default)(async (req, res) => {
+    try {
+        const { url } = req.body;
+        console.log("/scrape - title, text", url);
+        const { title, text } = await crawlWebsite(url);
+        console.log("/scrape - title, text", title, text);
+        const summary = await summarize(text);
+        console.log("/scrape - text", text);
+        const vector = await embed(summary);
+        console.log("/scrape - summary", summary);
+        let doc = new WebDoc({
+            url,
+            title,
+            document: text,
+            facts: summary.split("\n"),
+            embedding: vector,
+        });
+        console.log({ doc });
+        await doc.save();
+        res.json({ message: "Saved", doc });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send("Error scraping and saving");
+    }
+}));
 //TODO: AUTH user
 app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) => {
     // const { topic } = req.body;

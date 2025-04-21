@@ -162,6 +162,7 @@ export const runAudit = async (siteUrl: string) => {
     await browser.close();
 
     return {
+      siteUrl,
       trackingScripts,
       reviewAuditResults,
     };

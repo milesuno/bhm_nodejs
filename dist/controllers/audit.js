@@ -115,6 +115,7 @@ const runAudit = async (siteUrl) => {
         const reviewAuditResults = await (0, audit_social_proof_1.auditReviews)(siteUrl);
         await browser.close();
         return {
+            siteUrl,
             trackingScripts,
             reviewAuditResults,
         };
