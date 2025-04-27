@@ -3,10 +3,13 @@ import { auditReviews } from "./controllers/audit-social-proof";
 import asyncMiddleware from "./middleware/asyncMiddleware";
 import routes from "./routes";
 import cors from "cors";
+import { IncomingForm } from "formidable";
+import fs from "fs";
+import pdfParse from "pdf-parse";
+
 
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const axios = require("axios");
 const cron = require("node-cron");
 const app = express();
@@ -14,7 +17,8 @@ const nodemailer = require("nodemailer");
 const puppeteer = require("puppeteer");
 const Article = require("./models/article");
 const WebDoc = require("./models/doc-ref");
-const Audit = require("./models/audit");
+const WebPDFDoc = require("./models/doc-pdf");
+
 
 app.use(express.json());
 
@@ -49,17 +53,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// var transporter = nodemailer.createTransport({
-//   host: "smtp.zoho.eu",
-//   port: 465,
-//   secure: true,
-//   auth: {
-//     user: process.env.ZOHO_EMAIL,
-//     pass: process.env.ZOHO_PW,
-//   },
-// });
-
-// Function to generate recommendations
+// OLLAMA AGENTS
 async function getRecommendations(article_name: any) {
   // Fetch ALL Articles for DB
   let prevArticles;
@@ -78,32 +72,90 @@ async function getRecommendations(article_name: any) {
   }
 }
 
-// Function to generate an article
 async function generateArticleWebMetrics() {
   let topics = [
-    "Web Analytics: Landscape, Future, Past",
-    "Web Analytics Tools: ",
-    "Web Analytics Tools Implementation: ",
-    "Website Metrics: ",
-    "Web Metrics: Common Implementation mistakes",
-    "Web Analytics Roles: Data Engineer, Data Analyst, Web Analytics Engineer",
+    "Web Analytics: Current Landscape",
+    "Web Analytics:  Future Landscape",
+    "Web Analytics: Past Landscape",
+    "Web Analytics: Web Analytics vs Analytics",
+    "Web Analytics: Web Analytics vs Analytics vs Statistics",
+    "Web Analytics: Web Analytics vs Statistics",
+    "Web Analytics: Web Analytics vs Statistics - how much stats do you need to know",
+    "Web Analytics: Statistics in Web Analytics",
+    //TODO: ADD Tool Spotlight
+    "Web Analytics Tools: Web Analytics Tag Types",
+    "Web Analytics Tools: Types",
+    "Web Analytics Tools: A company user case example",
+    "Web Analytics Tools: Landscape",
+    "Web Analytics Tools: Legal Considerations",
+    "Web Analytics Tools: Users Consent",
+    "Web Analytics Tools: Legal Considerations",
+    "Web Analytics Tools Implementation: Adobe Analytics",
+    "Web Analytics Tools Implementation: Google Tag Manager",
+    "Web Analytics Tools Implementation: Google Analytics 4",
+    "Web Analytics Tools Implementation: Tealium",
+    "Web Analytics Tools Implementation: Hotjar",
+    "Web Analytics Tools Implementation: Best Practices",
+    "Web Analytics Tools Implementation: Common Mistakes",
+    "Web Analytics Tools Implementation: debugging",
+    "Web Analytics Job Roles",
+    "Web Analytics Roles: Data Engineer",
+    "Web Analytics Roles: Data Analyst",
+    "Web Analytics Roles: Web Analytics Engineer",
+    "Web Analytics Metrics: Common used metrics and use cases",
+    "Web Analytics Metrics: Business critical metrics",
+    "Web Analytics Metrics: Business specific metrics",
+    "Web Analytics Metrics: Common mistakes",
+    "Web Analytics Legal Considerations: Current landscape",
+    "Web Analytics Legal Considerations: Future landscape",
+    "Web Analytics Legal Considerations: Important legalisations",
+    "Web Analytics Legal Considerations: Upcoming legalisations",
+    "Web Analytics Legal Considerations: Tags",
+    "Web Analytics Legal Considerations: Consent",
+    "Web Analytics Legal Considerations: Locale Consent differences",
+    "Web Analytics Legal Considerations: company case study of failing to comply",
   ];
 
   let randIndex = Number((Math.random() * topics.length).toFixed(0));
+  console.log(randIndex, topics[randIndex]);
   const queryEmbedding = await embed(`${topics[randIndex]}`);
 
   // BUG: Will need data sources before new articles can be reliably generated
-  const results = await WebDoc.aggregate([
+  let results = await WebDoc.aggregate([
     {
       $vectorSearch: {
         queryVector: queryEmbedding,
-        path: "embedding",
+        path: "embedding_text",
         numCandidates: 100,
         limit: 5,
         index: "embed", // replace with your Atlas vector index name
       },
     },
   ]);
+
+  results.length === 0
+    ? (results = await WebDoc.aggregate([
+        {
+          $vectorSearch: {
+            queryVector: queryEmbedding,
+            path: "embedding",
+            numCandidates: 100,
+            limit: 5,
+            index: "embed", // replace with your Atlas vector index name
+          },
+        },
+      ]))
+    : await WebPDFDoc.aggregate([
+        {
+          $vectorSearch: {
+            queryVector: queryEmbedding,
+            path: "embedding_text",
+            numCandidates: 100,
+            limit: 5,
+            index: "embed_pdf", // replace with your Atlas vector index name
+          },
+        },
+      ]);
 
   const context = results.map((doc: any) => doc.document).join("\n\n");
   console.log({ results, context, queryEmbedding });
@@ -139,22 +191,18 @@ ${topics[randIndex]}
   }
 }
 
-async function crawlWebsite(url: any) {
-  const browser = await puppeteer.launch({ headless: "new" });
-  const page = await browser.newPage();
-  await page.goto(url, { waitUntil: "networkidle2" });
-
-  const title = await page.title();
-  const text = await page.evaluate(() =>
-    document.body.innerText.replace(/\s+/g, " ").trim()
-  );
-
-  await browser.close();
-  return { title, text };
+async function summarize(text: any) {
+  const prompt = `Summarize the main points of this text in upto 750 words from the following text:\n\n"${text}".`;
+  const res = await axios.post(`${OLLAMA_URL}/api/generate`, {
+    model: "mistral",
+    prompt,
+    stream: false,
+  });
+  return res.data.response.trim();
 }
 
-async function summarize(text: any) {
-  const prompt = `Extract 5 to 10 key factual points from the following text:\n\n"${text}"\n\nEach of the fact be bullet points only.`;
+async function factFinder(text: any) {
+  const prompt = `Extract 5 to 10 key factual points from the following text content :\n\n"${text}"\n\nEach of the fact be number bullet points only - DO NOT include ANY facts the about: dedications, authors or writers. DO NOT include any sub-bullet points in the bullet points list.`;
   const res = await axios.post(`${OLLAMA_URL}/api/generate`, {
     model: "mistral",
     prompt,
@@ -171,111 +219,14 @@ async function embed(text: any) {
   return res.data.embedding;
 }
 
-// try {
-//   const response = await fetch(OLLAMA_URL, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({
-//       model: MODEL,
-//       prompt: `You are a knowledgeable professional Data Engineer, Data Analyst, Web Analytics Engineer.
-//     Write a well-structured, engaging, and informative article, this article should be about: ${topics[randIndex]}.
-//     Include an introduction, main points, and a conclusion.
-//     Use examples if required for explaining complex topics.
-//     Keep the length to a 10 mins read.`,
-//       stream: false,
-//     }),
-//   });
-
-//   if (!response.ok) {
-//     throw new Error(`HTTP error! Status: ${response.status}`);
-//   }
-
-//   const data = await response.json();
-
-//   console.log({ data });
-
-//   return data.response.trim();
-// } catch (error) {
-//   console.error("Error:", error);
-//   return "An error occurred while generating the article.";
-// }
-// }
-
-// API endpoint to generate articles
-
-app.post(
-  "/scrape",
-  asyncMiddleware(async (req: any, res: any) => {
-    try {
-      const { url } = req.body;
-      console.log("/scrape - title, text", url);
-      const { title, text } = await crawlWebsite(url);
-      console.log("/scrape - title, text", title, text);
-      const summary = await summarize(text);
-      console.log("/scrape - text", text);
-
-      const vector = await embed(summary);
-      console.log("/scrape - summary", summary);
-
-      let doc = new WebDoc({
-        url,
-        title,
-        document: text,
-        facts: summary.split("\n"),
-        embedding: vector,
-      });
-      console.log({ doc });
-      await doc.save();
-      res.json({ message: "Saved", doc });
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error scraping and saving");
-    }
-  })
-);
-
-//TODO: AUTH user
-app.post(
-  "/generate-article",
-  asyncMiddleware(async (req: any, res: any) => {
-    // const { topic } = req.body;
-    // if (!topic) {
-    //   return res.status(400).json({ error: "Missing topic parameter" });
-    // }
-    const article = await generateArticleWebMetrics();
-    pendingArticle = { title: article?.split(":")[1].trim(), content: article };
-    await sendApprovalEmail(pendingArticle);
-
-    // const article = await generateArticleWebMetrics();
-    res.json({ pendingArticle });
-  })
-);
-
-// API endpoint for recommendations
-app.post(
-  "/recommend",
-  asyncMiddleware(async (req: any, res: any) => {
-    const { article_name } = req.body;
-    if (!article_name) {
-      return res.status(400).json({ error: "Missing userInput parameter" });
-    }
-
-    const recommendations = await getRecommendations(article_name);
-    res.json({ recommendations });
-  })
-);
-
-// Send approval email
 async function sendApprovalEmail(article: any) {
   console.log("SENDING APPROVAL EMAIL", article, {
     title: article.title,
     content: article.content,
   });
-  const approvalUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/approve`;
-  const rejectUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject`;
-  const rejectAllUrl = `http://k840gw8scw8gookgk80ogksw.31.187.72.122.sslip.io/reject-all`;
+  const approvalUrl = `https://api.businesshealthmetrics.com/approve`;
+  const rejectUrl = `https://api.businesshealthmetrics.com/reject`;
+  const rejectAllUrl = `https://api.businesshealthmetrics.com/reject-all`;
 
   const mailOptions = {
     from: '"BHM Writer"<milesoluku@gmail.com>',
@@ -289,6 +240,21 @@ async function sendApprovalEmail(article: any) {
   };
   await transporter.sendMail(mailOptions);
   console.log("SENT APPROVAL EMAIL");
+}
+
+// BOTS
+async function crawlWebsite(url: any) {
+  const browser = await puppeteer.launch({ headless: "new" });
+  const page = await browser.newPage();
+  await page.goto(url, { waitUntil: "networkidle2" });
+
+  const title = await page.title();
+  const text = await page.evaluate(() =>
+    document.body.innerText.replace(/\s+/g, " ").trim()
+  );
+
+  await browser.close();
+  return { title, text };
 }
 
 // Daily Cron Job (Runs at Midnight)
@@ -317,7 +283,127 @@ cron.schedule("0 0 * * *", async () => {
   );
 });
 
-// Approve Article
+
+// DATA SOURCING
+app.post(
+  "/scrape",
+  asyncMiddleware(async (req: any, res: any) => {
+    try {
+      const { url } = req.body;
+      console.log("/scrape - title, text", url);
+      const { title, text } = await crawlWebsite(url);
+      console.log("/scrape - title, text", title, text);
+      const facts = await factFinder(text);
+      console.log("/scrape - text", text);
+
+      const vector_facts = await embed(facts);
+      const vector_doc = await embed(text);
+
+      console.log("/scrape - summary", facts);
+
+      let doc = new WebDoc({
+        url,
+        title,
+        document: text,
+        facts: facts.split("\n"),
+        embedding_facts: vector_facts,
+        embedding_text: vector_doc,
+      });
+      console.log({ doc });
+      await doc.save();
+      res.status(200).send({ message: "Saved", doc });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error scraping and saving");
+    }
+  })
+);
+
+app.post(
+  "/upload",
+  asyncMiddleware(async (req: any, res: any) => {
+    console.log({ req });
+    // if (req.method !== "POST") return res.status(405).end();
+
+    // await connectMongo();
+
+    const form = new IncomingForm({ keepExtensions: true });
+    console.log({ form });
+
+    form.parse(req, async (err: any, fields: any, files: any) => {
+      const file = files.file[0];
+      const dataBuffer = fs.readFileSync(file.filepath);
+      const parsed = await pdfParse(dataBuffer);
+
+      const title = file.originalFilename;
+      // const chunks = chunkText(parsed.text);
+      const summary = await summarize(parsed.text);
+      const keyFacts = await factFinder(parsed.text);
+
+      const embedding_facts = await embed(keyFacts);
+      const embedding_summary = await embed(summary);
+      const embedding_text = await embed(parsed.text);
+
+      console.log({
+        title,
+        summary,
+        keyFacts,
+        embedding_facts,
+        embedding_summary,
+        embedding_text,
+      });
+
+      // convert to model
+      await new WebPDFDoc({
+        title,
+        // page: i + 1,
+        text: parsed.text,
+        summary,
+        facts: keyFacts.split("\n"),
+        embedding_facts: embedding_facts,
+        embedding_text: embedding_text,
+        embedding_summary,
+      }).save();
+
+      console.log({ WebPDFDoc });
+
+      // await documents.insertMany(vectorDocs);
+      res.json({ message: "Uploaded and embedded", chunks: WebPDFDoc.length });
+    });
+  })
+);
+
+// OLLAMA ROUTES
+app.post(
+  "/generate-article",
+  asyncMiddleware(async (req: any, res: any) => {
+    // const { topic } = req.body;
+    // if (!topic) {
+    //   return res.status(400).json({ error: "Missing topic parameter" });
+    // }
+    const article = await generateArticleWebMetrics();
+    pendingArticle = { title: article?.split(":")[1].trim(), content: article };
+    await sendApprovalEmail(pendingArticle);
+
+    // const article = await generateArticleWebMetrics();
+    res.status(200).send({ pendingArticle });
+  })
+);
+
+app.post(
+  "/recommend",
+  asyncMiddleware(async (req: any, res: any) => {
+    const { article_name } = req.body;
+    if (!article_name) {
+      return res.status(400).json({ error: "Missing userInput parameter" });
+    }
+
+    const recommendations = await getRecommendations(article_name);
+    res.json({ recommendations });
+  })
+);
+
+// ARTICLE GENERATION
 app.get("/approve", async (req: any, res: any) => {
   if (!pendingArticle) return res.send("No article pending.");
   await new Article({
@@ -328,7 +414,6 @@ app.get("/approve", async (req: any, res: any) => {
   res.send("Article approved and saved.");
 });
 
-// Reject Article
 app.get("/reject", async (req: any, res: any) => {
   if (!pendingArticle) return res.send("No article pending.");
   pendingArticle = null;
@@ -338,13 +423,14 @@ app.get("/reject", async (req: any, res: any) => {
   res.send("Article rejected. New one sent.");
 });
 
-// Reject All for the Day
 app.get("/reject-all", (req: any, res: any) => {
   rejectedToday = true;
   pendingArticle = null;
   res.send("No more articles will be sent today.");
 });
 
+
+// BOTS ROUTES
 app.post("/audit", async (req: any, res: any) => {
   try {
     let { siteUrl } = req.body;
@@ -366,9 +452,7 @@ app.post("/audit", async (req: any, res: any) => {
   }
 });
 
-// routes(app);
 
-// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
