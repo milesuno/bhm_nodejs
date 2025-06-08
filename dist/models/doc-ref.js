@@ -7,7 +7,8 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const docSchema = new mongoose_1.default.Schema({
     url: String,
     title: String,
-    document: String,
+    text: String,
+    summary: String,
     facts: Array,
     embedding_facts: { type: [Number], index: "2dsphere" },
     embedding_doc: { type: [Number], index: "2dsphere" },
