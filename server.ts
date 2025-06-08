@@ -678,8 +678,13 @@ app.get(
   asyncMiddleware(async (req: any, res: any) => {
     if (!pendingArticle) return res.send("No article pending.");
     pendingArticle = null;
+    pendingReviwedArticle = null;
+
     const content = await generateArticleWebMetrics();
-    pendingArticle = { title: "Generated Article", content };
+    const reviewedArticle = await articleReviewer(content)
+    pendingArticle = content;
+    pendingReviwedArticle = reviewedArticle;
+
     await sendApprovalEmail(pendingArticle);
     res.send("Article rejected. New one sent.");
   })
