@@ -477,12 +477,21 @@ cron.schedule("0 0 * * *", async () => {
     content
   );
 
-  pendingArticle = { title: content.split(":")[1], content };
-  console.log(
+  pendingArticle = {
+    _id: new ObjectId(),
+    title: content.includes("**Title:**")
+      ? content.split("**Title:**")[1].split("\n\n")[0]
+      : content?.split("\n\n")[1],
+    content: content.includes("**Title:**")
+      ? content?.split("\n\n").slice(1).join("\n\n")
+      : content?.split("\n\n").slice(1).join("\n\n"),
+    creation: Date.now(),
+  };  console.log(
     "[CRON] Running scheduled task at midnight 3",
     pendingArticle,
     content
   );
+  
   await sendApprovalEmail(pendingArticle);
   console.log(
     "[CRON] Running scheduled task at midnight 4 - EMAIL SENT",
