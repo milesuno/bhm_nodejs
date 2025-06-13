@@ -354,6 +354,7 @@ async function sendApprovalEmail(article: any) {
   console.log("SENDING APPROVAL EMAIL", article, {
     title: article.title,
     content: article.content,
+    improvedArticle: improvedArticle.content,
   });
   const approvalUrl = `https://api.businesshealthmetrics.com/approve`;
   const rejectUrl = `https://api.businesshealthmetrics.com/reject`;
@@ -486,12 +487,28 @@ cron.schedule("0 0 * * *", async () => {
       ? content?.split("\n\n").slice(1).join("\n\n")
       : content?.split("\n\n").slice(1).join("\n\n"),
     creation: Date.now(),
-  };  console.log(
+  };
+
+  let review = await articleReviewer(pendingArticle);
+  
+  pendingReviwedArticle = {
+    _id: new ObjectId(),
+    title:
+      review.includes("**Improved Article:**") && review.includes("**Title:**")
+        ? review
+            .split("**Improved Article:**")[1]
+            .split("**Title:**")[1]
+            .split("\n\n")[0]
+        : review.split("\n\n")[1],
+    content: review.split("\n\n").slice(3).join("\n\n"),
+    creation: Date.now(),
+  };
+  console.log(
     "[CRON] Running scheduled task at midnight 3",
     pendingArticle,
     content
   );
-  
+
   await sendApprovalEmail(pendingArticle);
   console.log(
     "[CRON] Running scheduled task at midnight 4 - EMAIL SENT",
@@ -690,7 +707,7 @@ app.get(
     pendingReviwedArticle = null;
 
     const content = await generateArticleWebMetrics();
-    const reviewedArticle = await articleReviewer(content)
+    const reviewedArticle = await articleReviewer(content);
     pendingArticle = content;
     pendingReviwedArticle = reviewedArticle;
 
