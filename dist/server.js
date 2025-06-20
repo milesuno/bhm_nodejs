@@ -147,14 +147,14 @@ async function generateArticleWebMetrics() {
     const context = results
         .map(async (doc) => {
         doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
-        // console.log("RESEARCH SUMMARISATION", { doc });
+        console.log("RESEARCH SUMMARISATION", { doc });
         // if (doc.document)
         // await promptBasedSummary(topics[randIndex], doc?.document);
         // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
         // (await promptBasedSummary(topics[randIndex], doc));
     })
         .join("\n\n");
-    // console.log({ results, context, queryEmbedding });
+    console.log({ results, context });
     // TODO: Removed till Comfy UI is intergrated
     //   Title Image Description:
     //  Main point Image Description:
@@ -320,6 +320,7 @@ async function sendApprovalEmail(article) {
     console.log("SENDING APPROVAL EMAIL", article, {
         title: article.title,
         content: article.content,
+        improvedArticle: improvedArticle.content,
     });
     const approvalUrl = `https://api.businesshealthmetrics.com/approve`;
     const rejectUrl = `https://api.businesshealthmetrics.com/reject`;
@@ -435,6 +436,18 @@ cron.schedule("0 0 * * *", async () => {
         content: content.includes("**Title:**")
             ? content?.split("\n\n").slice(1).join("\n\n")
             : content?.split("\n\n").slice(1).join("\n\n"),
+        creation: Date.now(),
+    };
+    let review = await articleReviewer(pendingArticle);
+    pendingReviwedArticle = {
+        _id: new mongodb_1.ObjectId(),
+        title: review.includes("**Improved Article:**") && review.includes("**Title:**")
+            ? review
+                .split("**Improved Article:**")[1]
+                .split("**Title:**")[1]
+                .split("\n\n")[0]
+            : review.split("\n\n")[1],
+        content: review.split("\n\n").slice(3).join("\n\n"),
         creation: Date.now(),
     };
     console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
@@ -606,7 +619,7 @@ app.get("/reject-all", (0, asyncMiddleware_1.default)(async (req, res) => {
 app.post("/audit", (0, asyncMiddleware_1.default)(async (req, res) => {
     try {
         let { siteUrl } = req.body;
-        console.log({ siteUrl, body: req.body, req });
+        console.log({ siteUrl, body: req.body });
         if (!siteUrl) {
             return res.status(400).json({ error: "No site URL provided" });
         }
@@ -615,7 +628,7 @@ app.post("/audit", (0, asyncMiddleware_1.default)(async (req, res) => {
         const audit_metrics = await (0, audit_1.runAudit)(siteUrl);
         const audit_social_proof = await (0, audit_social_proof_1.auditReviews)(siteUrl);
         console.log({ audit_metrics, audit_social_proof });
-        res.status(200).json({ audit_metrics, audit_social_proof });
+        res.status(200).json({ siteUrl, audit_metrics, audit_social_proof });
     }
     catch (error) {
         res.status(500).json({ error: error.message });

@@ -159,14 +159,14 @@ async function generateArticleWebMetrics() {
   const context = results
     .map(async (doc: any) => {
       doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
-      // console.log("RESEARCH SUMMARISATION", { doc });
+      console.log("RESEARCH SUMMARISATION", { doc });
       // if (doc.document)
       // await promptBasedSummary(topics[randIndex], doc?.document);
       // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
       // (await promptBasedSummary(topics[randIndex], doc));
     })
     .join("\n\n");
-  // console.log({ results, context, queryEmbedding });
+  console.log({ results, context });
 
   // TODO: Removed till Comfy UI is intergrated
   //   Title Image Description:
@@ -490,7 +490,7 @@ cron.schedule("0 0 * * *", async () => {
   };
 
   let review = await articleReviewer(pendingArticle);
-  
+
   pendingReviwedArticle = {
     _id: new ObjectId(),
     title:
@@ -731,7 +731,7 @@ app.post(
   asyncMiddleware(async (req: any, res: any) => {
     try {
       let { siteUrl } = req.body;
-      console.log({ siteUrl, body: req.body, req });
+      console.log({ siteUrl, body: req.body });
       if (!siteUrl) {
         return res.status(400).json({ error: "No site URL provided" });
       }
@@ -743,7 +743,7 @@ app.post(
 
       console.log({ audit_metrics, audit_social_proof });
 
-      res.status(200).json({ audit_metrics, audit_social_proof });
+      res.status(200).json({ siteUrl, audit_metrics, audit_social_proof });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

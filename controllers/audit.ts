@@ -1,174 +1,277 @@
 import puppeteer from "puppeteer";
-import { auditReviews } from "./audit-social-proof"; // Import auditReviews
+
+const targetUrl = "https://example.com"; // Replace with your target site
+
+type TechKeys =
+  | "googleTagManager"
+  | "googleAnalytics"
+  | "googleAnalytics4"
+  | "adobeAnalytics"
+  | "adobeTarget"
+  | "tealium"
+  | "tiktokPixel"
+  | "floodlight"
+  | "crazyEgg"
+  | "hotjar"
+  | "contentSquare"
+  | "oneTrust";
 
 export const runAudit = async (siteUrl: string) => {
-  console.log(`🔍 Auditing site: ${siteUrl}`);
+  const browser = await puppeteer.launch({ headless: true });
+  const context = await browser.createBrowserContext();
+  const page = await context.newPage();
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-  let document: any;
-  let scriptUrls: string[] = []; // Define scriptUrls before using it
-  const page = await browser.newPage();
+  const techPatterns: Record<TechKeys, RegExp> = {
+    googleTagManager: /googletagmanager\.com/,
+    googleAnalytics: /google-analytics\.com/,
+    googleAnalytics4: /gtag\/js\?id=G-/,
+    adobeAnalytics: /(?:omniture|adobedc|sc)\/(?:s_code|s\.js)|\/b\/ss\//,
+    adobeTarget: /tt\.omtrdc\.net|demdex\.net/,
+    tealium: /tealiumiq\.com/,
+    tiktokPixel: /tiktok\.com\/tracking/,
+    floodlight: /fls\.doubleclick\.net/,
+    crazyEgg: /crazyegg\.com/,
+    hotjar: /hotjar\.(com|io)/,
+    contentSquare: /contentsquare\.net/,
+    oneTrust: /(cdn\.cookielaw\.org|onetrust\.com)/,
+  };
+  const domIndicators: Partial<Record<TechKeys, string[]>> = {
+    googleTagManager: ['script[src*="googletagmanager.com"]'],
+    googleAnalytics: ['script[src*="google-analytics.com"]'],
+    googleAnalytics4: ['script[src*="gtag/js?id=G-"]'],
+    adobeAnalytics: ['script[src*="/b/ss/"]', 'script[src*="omniture"]'],
+    adobeTarget: ['script[src*="tt.omtrdc.net"]', 'script[src*="demdex.net"]'],
+    tealium: ['script[src*="tealiumiq.com"]'],
+    tiktokPixel: [
+      'script[src*="tiktok.com/tracking"]',
+      'script[src*="analytics.tiktok.com"]',
+    ],
+    floodlight: ['script[src*="fls.doubleclick.net"]'],
+    crazyEgg: ['script[src*="crazyegg.com"]'],
+    hotjar: ['script[src*="hotjar.com"]', 'script[src*="hotjar.io"]'],
+    contentSquare: ['script[src*="contentsquare.net"]'],
+    oneTrust: [
+      'script[src*="cookielaw.org"]',
+      'script[src*="onetrust.com"]',
+      "#onetrust-banner-sdk", // Common cookie consent banner
+    ],
+  };
 
-  // await page.on("request", (req) => {
-  //   if (req.resourceType() === "script") {
-  //     console.log({ req });
-  //     const url = req.url();
-  //     scriptUrls.push(url); // Store the URL
-  //     console.log("📜", scriptUrls);
+  async function handleConsentBanner(page: any) {
+    try {
+      // Example 1: Look for a button with "Accept", "Agree", etc.
+      const acceptButtonSelectors = [
+        'button[aria-label*="accept"]',
+        'button[aria-label*="Agree"]',
+        'button[aria-label*="Alle akzeptieren"]', // German example
+        "#onetrust-accept-btn-handler", // OneTrust CMP example
+        ".cc-accept", // Cookie Consent class example
+        '[data-testid="uc-accept-all-button"]', // Usercentrics
+      ];
 
-  //     console.log("📜 Script detected:", url); // Log the script URL    }
-  //     scriptUrls = scriptUrls;
-  //   }
-  // });
-  // console.log(scriptUrls);
-  async function waitForNetworkIdle(
-    page: any,
-    timeout = 10000,
-    idleTime = 500
-  ) {
-    let timeoutHandle: NodeJS.Timeout;
-    let resolveFunc = () => {};
+      for (const selector of acceptButtonSelectors) {
+        const button = await page.$(selector);
+        if (button) {
+          console.log(`Clicking consent banner button: ${selector}`);
+          await button.click();
+          await new Promise((resolve) => setTimeout(resolve, 5000)); // ✅ Works on all versions
+          return true;
+        }
+      }
 
-    const promise = new Promise<void>((resolve) => (resolveFunc = resolve));
+      // Example 2: If iframe-based CMP is used (like Usercentrics, TrustArc, etc.)
+      const frames = page.frames();
+      for (const frame of frames) {
+        const button = await frame.$("#onetrust-accept-btn-handler");
+        if (button) {
+          console.log(`Clicking consent button inside iframe`);
+          await button.click();
+          await new Promise((resolve) => setTimeout(resolve, 5000)); // ✅ Works on all versions
+          return true;
+        }
+      }
 
-    let activeRequests = 0;
-    let lastChange = Date.now();
+      // Generic fallback: search for buttons with text "Accept" or "Agree"
+      const clicked = await page.evaluate(() => {
+        const buttons = Array.from(
+          document.querySelectorAll(
+            'button, input[type="button"], input[type="submit"]'
+          )
+        );
+        for (const button of buttons) {
+          const text = (
+            button.textContent ||
+            button.getAttribute("value") ||
+            ""
+          )
+            .trim()
+            .toLowerCase();
+          if (
+            [
+              "accept",
+              "accept all",
+              "accept all cookies",
+              "agree",
+              "yes, i agree",
+              "i accept",
+              "allow all",
+              "allow",
+              "confirm",
+            ].some((keyword) => text.includes(keyword))
+          ) {
+            (button as HTMLElement).click();
+            return true;
+          }
+        }
+        return false;
+      });
 
-    function checkIdle() {
-      if (activeRequests === 0 && Date.now() - lastChange > idleTime) {
-        clearTimeout(timeoutHandle);
-        resolveFunc();
-      } else {
-        setTimeout(checkIdle, 100);
+      if (clicked) {
+        console.log("Clicked generic consent button based on text");
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // ✅ Works on all versions
+        return true;
+      }
+
+      console.log("No consent banner detected.");
+      return false;
+    } catch (err) {
+      console.error("Error handling consent banner:", err);
+      return false;
+    }
+  }
+
+  let foundUrls: Record<TechKeys, string[]> | any = Object.keys(
+    techPatterns
+  ).reduce((acc, key) => {
+    acc[key as TechKeys] = [];
+    return acc;
+  }, {} as Record<TechKeys, string[]>);
+
+  try {
+    page.on("request", (request) => {
+      const url = request.url();
+      for (const tech of Object.keys(techPatterns) as TechKeys[]) {
+        const pattern = techPatterns[tech];
+        if (pattern.test(url)) {
+          foundUrls[tech].push(url);
+        }
+      }
+    });
+    await page.goto(siteUrl, { waitUntil: "networkidle2", timeout: 30000 });
+    await page.goto(siteUrl, { waitUntil: "domcontentloaded" });
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // ✅ Works on all versions
+
+    await handleConsentBanner(page);
+
+    // LOOKS LIKE JUST A TIMER??
+    for (const [tech, selectors] of Object.entries(domIndicators) as [
+      TechKeys,
+      string | string[]
+    ][]) {
+      const selectorArray = Array.isArray(selectors) ? selectors : [selectors];
+      for (const selector of selectorArray) {
+        await page.waitForSelector(selector, { timeout: 5000 }).catch(() => {});
+      }
+    }
+    await new Promise((res) => setTimeout(res, 3000));
+
+    // NETWORK REQUEST REPORT
+    const report: Record<TechKeys, string> = Object.keys(techPatterns).reduce(
+      (acc: any, key) => {
+        const tech = key as TechKeys;
+        acc[tech] =
+          tech === "googleAnalytics4"
+            ? foundUrls[tech].length
+              ? true
+              : false
+            : foundUrls[tech].length
+            ? true
+            : false;
+        return acc;
+      },
+      {} as Record<TechKeys, string>
+    );
+
+    console.log("\n📊 Technology Detection Report:\n", report);
+
+    console.log("\n🔎 Matching URLs:");
+    for (const tech of Object.keys(foundUrls) as TechKeys[]) {
+      if (foundUrls[tech].length) {
+        console.log(`\n${tech}:`);
+        foundUrls[tech].forEach((u: any) => console.log("  ", u));
       }
     }
 
-    page.on("request", () => {
-      activeRequests++;
-      lastChange = Date.now();
-    });
+    const techChecks = {
+      tealium: () =>
+        typeof (window as any).utag !== "undefined" ||
+        typeof (window as any).utag_data !== "undefined",
 
-    page.on("requestfinished", () => {
-      activeRequests--;
-      lastChange = Date.now();
-    });
+      google_analytics_universal: () =>
+        typeof (window as any).ga === "function" ||
+        typeof (window as any)._gaq !== "undefined",
 
-    page.on("requestfailed", () => {
-      activeRequests--;
-      lastChange = Date.now();
-    });
+      google_analytics_4: () => typeof (window as any).gtag === "function",
 
-    timeoutHandle = setTimeout(resolveFunc, timeout); // fallback in case idle never occurs
-    checkIdle();
+      google_tag_manager: () =>
+        typeof (window as any).dataLayer !== "undefined",
 
-    return promise;
-  }
+      facebook_pixel: () => typeof (window as any).fbq === "function",
 
-  try {
-    await page.goto(siteUrl);
-    await waitForNetworkIdle(page, 10000, 500);
+      hotjar: () => typeof (window as any).hj === "function",
 
-    // Scan for tracking scripts
-    const trackingScripts = await page.evaluate(() => {
-      const scripts = [...document.scripts].map((script) => script.src);
-      const pageText = document.documentElement.innerHTML;
-      let window: any;
-      // Check for common tracking scripts
-      const googleAnalytics =
-        scripts.some((src: any) => src.includes("GoogleAnalyticsObject")) ||
-        window?.ga ||
-        window?.GoogleAnalyticsObject;
+      segment: () =>
+        typeof (window as any).analytics === "object" &&
+        typeof (window as any).analytics.track === "function",
 
-      const googleTagManager =
-        scripts.some((src: any) =>
-          src.includes("googletagmanager.com/gtm.js")
-        ) || window?.dataLayer;
+      mixpanel: () =>
+        typeof (window as any).mixpanel === "object" &&
+        typeof (window as any).mixpanel.track === "function",
 
-      const googleAnalytics4 =
-        pageText.includes("gtag('config')") || window?.gtag;
+      adobe_analytics: () =>
+        typeof (window as any).s === "object" ||
+        typeof (window as any).AppMeasurement === "function",
 
-      // const hasGA4 =
-      //   scriptUrls.includes("https://www.googletagmanager.com/gtag/js") ||
-      //   pageText.includes("gtag('config'");
-
-      const adobeAnalytics =
-        scripts.some(
-          (src) => src.includes("omniture") || src.includes("adobedtm.com")
-        ) || window?.s;
-
-      // const hasAdobeAnalytics = [...scriptUrls].some(
-      //   (url: any) =>
-      //     url.includes("assets.adobedtm.com") ||
-      //     url.includes("omniture") ||
-      //     url.includes("adobe")
-      // );
-
-      const adobeTarget =
-        scripts.some((src) => src.includes("tt.omtrdc.net")) ||
-        window?._satellite;
-
-      const tealium =
-        scripts.some((src) => src.includes("tags.tiqcdn.com/utag")) ||
-        window?.utag;
-
-      const tiktokPixel =
-        scripts.some((src) => src.includes("ticdn.com/pixel")) ||
-        window?.tiktokPixel;
-
-      const floodlight =
-        scripts.some((src) => src.includes("fls.doubleclick.net")) ||
-        window?.FLC;
-
-      const crazyEgg =
-        scripts.some((src) => src.includes("crazyegg.com")) || window?.CE;
-
-      const hotjar =
-        scripts.some((src) => src.includes("hotjar.com")) || window?.hj;
-
-      const contentSquare =
-        scripts.some((src) => src.includes("contentsquare.net")) ||
-        window?._contentSquare;
-
-      const oneTrust =
-        scripts.some(
-          (src) =>
-            src.includes("onetrust.com") || src.includes("cookie-consent")
-        ) || window?.OneTrust;
-
-      return {
-        googleTagManager: googleTagManager ? "✅ Found" : "❌ Not Found",
-        googleAnalytics: googleAnalytics ? "✅ Found" : "❌ Not Found",
-        googleAnalytics4: googleAnalytics4
-          ? "✅ GA4 Found"
-          : "❌ GA4 Not Found",
-        adobeAnalytics: adobeAnalytics ? "✅ Found" : "❌ Not Found",
-        adobeTarget: adobeTarget ? "✅ Found" : "❌ Not Found",
-        tealium: tealium ? "✅ Found" : "❌ Not Found",
-        tiktokPixel: tiktokPixel ? "✅ Found" : "❌ Not Found",
-        floodlight: floodlight ? "✅ Found" : "❌ Not Found",
-        crazyEgg: crazyEgg ? "✅ Found" : "❌ Not Found",
-        hotjar: hotjar ? "✅ Found" : "❌ Not Found",
-        contentSquare: contentSquare ? "✅ Found" : "❌ Not Found",
-        oneTrust: oneTrust ? "✅ Found" : "❌ Not Found",
-      };
-    });
-
-    // Run review site audit
-    const reviewAuditResults = await auditReviews(siteUrl);
-
-    await browser.close();
-
-    return {
-      siteUrl,
-      trackingScripts,
-      reviewAuditResults,
+      matomo: () => Array.isArray((window as any)._paq),
     };
+
+    // DOM Check
+    const found = await page.evaluate((checks) => {
+      const results: Record<string, boolean> = {};
+      for (const [key, checkFnStr] of Object.entries(checks)) {
+        try {
+          // Rebuild function from string (function.toString not serializable)
+          const fn = new Function(`return (${checkFnStr})();`);
+          results[key] = fn();
+        } catch {
+          results[key] = false;
+        }
+      }
+      return results;
+    }, Object.fromEntries(Object.entries(techChecks).map(([key, fn]) => [key, fn.toString()])));
+
+    // TODO: Create Final Report
+    // IF tech pass CSS check OR Network Request Check
+    // report = NETWORK
+    // found = DOM
+    let audit = {
+      tealium: report["tealium"] || found["tealium"],
+      googleTagManager: report["googleTagManager"] || found["googleTagManager"],
+      googleAnalytics: report["googleAnalytics"] || found["googleAnalytics"],
+      googleAnalytics4: report["googleAnalytics4"] || found["googleAnalytics4"],
+      adobeAnalytics: report["adobeAnalytics"] || found["adobeAnalytics"],
+      adobeTarget: report["adobeTarget"] || found["adobeTarget"],
+      tiktokPixel: report["tiktokPixel"] || found["tiktokPixel"],
+      crazyEgg: report["crazyEgg"] || found["crazyEgg"],
+      hotjar: report["hotjar"] || found["hotjar"],
+    };
+
+    await context.close();
+    return { siteUrl, report, found, audit, foundUrls };
+
+    // Wait a little longer for delayed scripts to load
   } catch (error) {
-    console.error("🚨 Audit failed:", error);
-    await browser.close();
-    throw new Error("Audit failed.");
+    console.error("❗ Navigation error:", (error as Error).message);
   }
+  await browser.close();
 };
