@@ -311,6 +311,8 @@ async function embed(text: any) {
 }
 
 function formatEmailTextToHTML(text: any) {
+  console.log("formatEmailTextToHTML");
+
   // Convert bold (**text**) to <strong>
   // text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
@@ -346,6 +348,7 @@ function formatEmailTextToHTML(text: any) {
     "<h2>Main Point Image Description</h2>"
   );
   text = text?.replace(/\*\*References:\*\*/g, "<h3>References</h3>");
+  console.log("DONE formatEmailTextToHTML");
 
   return text;
 }
@@ -489,7 +492,7 @@ cron.schedule("0 0 * * *", async () => {
     creation: Date.now(),
   };
 
-  let review = await articleReviewer(pendingArticle);
+  let review = await articleReviewer(content);
 
   pendingReviwedArticle = {
     _id: new ObjectId(),

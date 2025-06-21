@@ -292,6 +292,7 @@ async function embed(text) {
     return res.data.embedding;
 }
 function formatEmailTextToHTML(text) {
+    console.log("formatEmailTextToHTML");
     // Convert bold (**text**) to <strong>
     // text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     // Convert bullet points (* ) to <ul><li>
@@ -314,6 +315,7 @@ function formatEmailTextToHTML(text) {
     text = text?.replace(/\*\*Title Image Description:\*\*/g, "<h2>Title Image Description</h2>");
     text = text?.replace(/\*\*Main point Image Description:\*\*/g, "<h2>Main Point Image Description</h2>");
     text = text?.replace(/\*\*References:\*\*/g, "<h3>References</h3>");
+    console.log("DONE formatEmailTextToHTML");
     return text;
 }
 async function sendApprovalEmail(article) {
@@ -438,7 +440,7 @@ cron.schedule("0 0 * * *", async () => {
             : content?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
     };
-    let review = await articleReviewer(pendingArticle);
+    let review = await articleReviewer(content);
     pendingReviwedArticle = {
         _id: new mongodb_1.ObjectId(),
         title: review.includes("**Improved Article:**") && review.includes("**Title:**")
