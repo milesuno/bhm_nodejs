@@ -125,6 +125,8 @@ async function generateArticleWebMetrics() {
   promptRef = topics[randIndex];
   const queryEmbedding = await embed(`${topics[randIndex]}`);
 
+  console.log({ queryEmbedding });
+
   // BUG: Will need data sources before new articles can be reliably generated
   let results = await WebPDFDoc.aggregate([
     {
