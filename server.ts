@@ -125,7 +125,7 @@ async function generateArticleWebMetrics() {
   promptRef = topics[randIndex];
   const queryEmbedding = await embed(`${topics[randIndex]}`);
 
-  console.log({ queryEmbedding });
+  // console.log({ queryEmbedding });
 
   // BUG: Will need data sources before new articles can be reliably generated
   let results = await WebPDFDoc.aggregate([
@@ -139,6 +139,7 @@ async function generateArticleWebMetrics() {
       },
     },
   ]);
+  console.log({ results });
 
   let scanDocResults = await WebDoc.aggregate([
     {
@@ -151,6 +152,8 @@ async function generateArticleWebMetrics() {
       },
     },
   ]);
+
+  console.log({ results, scanDocResults });
 
   scanDocResults.length < 0
     ? (results = results.push(...scanDocResults))
@@ -472,7 +475,7 @@ async function crawlWebsite(url: any) {
 }
 
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
   console.log("[CRON] Running scheduled task at midnight", rejectedToday);
   if (rejectedToday) return; // Skip if rejected all for the day
   console.log("[CRON] Running scheduled task at midnight 1");
