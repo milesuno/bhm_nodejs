@@ -156,6 +156,7 @@ async function generateArticleWebMetrics() {
 
   vectorSearchResults = results.join("\n\n");
 
+  console.log({ results, scanDocResults });
   const context = results
     .map(async (doc: any) => {
       doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
