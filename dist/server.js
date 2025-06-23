@@ -423,7 +423,7 @@ async function crawlWebsite(url) {
     return { title, text };
 }
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("5 * * * *", async () => {
+cron.schedule("* * * * *", async () => {
     console.log("[CRON] Running scheduled task at midnight", rejectedToday);
     if (rejectedToday)
         return; // Skip if rejected all for the day
