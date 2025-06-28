@@ -428,7 +428,7 @@ async function crawlWebsite(url) {
     return { title, text };
 }
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("*/2 * * * *", async () => {
+cron.schedule("*/2 * * * *", (0, asyncMiddleware_1.default)(async () => {
     console.log("[CRON] Running scheduled task at midnight", rejectedToday);
     if (rejectedToday)
         return; // Skip if rejected all for the day
@@ -454,7 +454,8 @@ cron.schedule("*/2 * * * *", async () => {
     let review = await articleReviewer(content);
     pendingReviwedArticle = {
         _id: new mongodb_1.ObjectId(),
-        title: review.includes("**Improved Article:**") && review.includes("**Title:**")
+        title: review.includes("**Improved Article:**") &&
+            review.includes("**Title:**")
             ? review
                 .split("**Improved Article:**")[1]
                 .split("**Title:**")[1]
@@ -466,7 +467,7 @@ cron.schedule("*/2 * * * *", async () => {
     console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
     await sendApprovalEmail(pendingArticle);
     console.log("[CRON] Running scheduled task at midnight 4 - EMAIL SENT", pendingArticle);
-});
+}));
 // DATA SOURCING
 app.post("/scrape", (0, asyncMiddleware_1.default)(async (req, res) => {
     try {

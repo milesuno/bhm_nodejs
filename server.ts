@@ -477,63 +477,67 @@ async function crawlWebsite(url: any) {
 }
 
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("*/2 * * * *", async () => {
-  console.log("[CRON] Running scheduled task at midnight", rejectedToday);
-  if (rejectedToday) return; // Skip if rejected all for the day
-  console.log(
-    "[CRON] Running scheduled task at midnight 1",
-    generateArticleWebMetrics
-  );
-
-  let content;
-  try {
-    content = await generateArticleWebMetrics();
+cron.schedule(
+  "*/2 * * * *",
+  asyncMiddleware(async () => {
+    console.log("[CRON] Running scheduled task at midnight", rejectedToday);
+    if (rejectedToday) return; // Skip if rejected all for the day
     console.log(
-      "[CRON] Running scheduled task at midnight 2",
+      "[CRON] Running scheduled task at midnight 1",
+      generateArticleWebMetrics
+    );
+
+    let content;
+    try {
+      content = await generateArticleWebMetrics();
+      console.log(
+        "[CRON] Running scheduled task at midnight 2",
+        pendingArticle,
+        content
+      );
+    } catch (error) {
+      console.log({ error });
+    }
+
+    pendingArticle = {
+      _id: new ObjectId(),
+      title: content.includes("**Title:**")
+        ? content.split("**Title:**")[1].split("\n\n")[0]
+        : content?.split("\n\n")[1],
+      content: content.includes("**Title:**")
+        ? content?.split("\n\n").slice(1).join("\n\n")
+        : content?.split("\n\n").slice(1).join("\n\n"),
+      creation: Date.now(),
+    };
+
+    let review = await articleReviewer(content);
+
+    pendingReviwedArticle = {
+      _id: new ObjectId(),
+      title:
+        review.includes("**Improved Article:**") &&
+        review.includes("**Title:**")
+          ? review
+              .split("**Improved Article:**")[1]
+              .split("**Title:**")[1]
+              .split("\n\n")[0]
+          : review.split("\n\n")[1],
+      content: review.split("\n\n").slice(3).join("\n\n"),
+      creation: Date.now(),
+    };
+    console.log(
+      "[CRON] Running scheduled task at midnight 3",
       pendingArticle,
       content
     );
-  } catch (error) {
-    console.log({ error });
-  }
 
-  pendingArticle = {
-    _id: new ObjectId(),
-    title: content.includes("**Title:**")
-      ? content.split("**Title:**")[1].split("\n\n")[0]
-      : content?.split("\n\n")[1],
-    content: content.includes("**Title:**")
-      ? content?.split("\n\n").slice(1).join("\n\n")
-      : content?.split("\n\n").slice(1).join("\n\n"),
-    creation: Date.now(),
-  };
-
-  let review = await articleReviewer(content);
-
-  pendingReviwedArticle = {
-    _id: new ObjectId(),
-    title:
-      review.includes("**Improved Article:**") && review.includes("**Title:**")
-        ? review
-            .split("**Improved Article:**")[1]
-            .split("**Title:**")[1]
-            .split("\n\n")[0]
-        : review.split("\n\n")[1],
-    content: review.split("\n\n").slice(3).join("\n\n"),
-    creation: Date.now(),
-  };
-  console.log(
-    "[CRON] Running scheduled task at midnight 3",
-    pendingArticle,
-    content
-  );
-
-  await sendApprovalEmail(pendingArticle);
-  console.log(
-    "[CRON] Running scheduled task at midnight 4 - EMAIL SENT",
-    pendingArticle
-  );
-});
+    await sendApprovalEmail(pendingArticle);
+    console.log(
+      "[CRON] Running scheduled task at midnight 4 - EMAIL SENT",
+      pendingArticle
+    );
+  })
+);
 
 // DATA SOURCING
 app.post(
