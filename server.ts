@@ -77,108 +77,110 @@ async function getRecommendations(article_name: any) {
 }
 
 async function generateArticleWebMetrics() {
-  let topics = [
-    "Web Analytics: Current Landscape",
-    "Web Analytics: Future Landscape (upcoming/new)",
-    "Web Analytics: Past Landscape (histroy)",
-    "Web Analytics: Web Analytics vs Analytics",
-    "Web Analytics: Web Analytics vs Analytics vs Statistics",
-    "Web Analytics: Web Analytics vs Statistics",
-    "Web Analytics: Web Analytics vs Statistics - how much stats do you need to know",
-    "Web Analytics: Statistics in Web Analytics",
-    //TODO: ADD Tool Spotlight
-    "Web Analytics Tools: Web Analytics Tag Types",
-    "Web Analytics Tools: Types",
-    "Web Analytics Tools: A company user case example",
-    "Web Analytics Tools: Landscape",
-    // "Web Analytics Tools: Legal Considerations",
-    "Web Analytics Tools: Users Consent",
-    // "Web Analytics Tools: Legal Considerations",
-    "Web Analytics Tools Implementation: Adobe Analytics",
-    "Web Analytics Tools Implementation: Google Tag Manager",
-    "Web Analytics Tools Implementation: Google Analytics 4",
-    "Web Analytics Tools Implementation: Tealium",
-    "Web Analytics Tools Implementation: Hotjar",
-    "Web Analytics Tools Implementation: Best Practices",
-    // "Web Analytics Tools Implementation: Common Mistakes",
-    "Web Analytics Tools Implementation: debugging",
-    "Web Analytics Job Roles",
-    // "Web Analytics Roles - Deep Dive: Data Analyst",
-    "Web Analytics Roles - Deep Dive: Data Engineer",
-    "Web Analytics Roles - Deep Dive: Web Analytics Engineer",
-    "Web Analytics Metrics: Common used metrics and use cases",
-    "Web Analytics Metrics: Business critical metrics",
-    "Web Analytics Metrics: Business specific metrics",
-    "Web Analytics Metrics: Common mistakes",
-    // "Web Analytics Legal Considerations: Current landscape",
-    // "Web Analytics Legal Considerations: Future landscape",
-    // "Web Analytics Legal Considerations: Important legalisations",
-    // "Web Analytics Legal Considerations: Upcoming legalisations",
-    // "Web Analytics Legal Considerations: Tags",
-    // "Web Analytics Legal Considerations: Consent",
-    // "Web Analytics Legal Considerations: Locale Consent differences",
-    // "Web Analytics Legal Considerations: company case study of failing to comply",
-  ];
+  console.log("generateArticleWebMetrics");
+  try {
+    let topics = [
+      "Web Analytics: Current Landscape",
+      "Web Analytics: Future Landscape (upcoming/new)",
+      "Web Analytics: Past Landscape (histroy)",
+      "Web Analytics: Web Analytics vs Analytics",
+      "Web Analytics: Web Analytics vs Analytics vs Statistics",
+      "Web Analytics: Web Analytics vs Statistics",
+      "Web Analytics: Web Analytics vs Statistics - how much stats do you need to know",
+      "Web Analytics: Statistics in Web Analytics",
+      //TODO: ADD Tool Spotlight
+      "Web Analytics Tools: Web Analytics Tag Types",
+      "Web Analytics Tools: Types",
+      "Web Analytics Tools: A company user case example",
+      "Web Analytics Tools: Landscape",
+      // "Web Analytics Tools: Legal Considerations",
+      "Web Analytics Tools: Users Consent",
+      // "Web Analytics Tools: Legal Considerations",
+      "Web Analytics Tools Implementation: Adobe Analytics",
+      "Web Analytics Tools Implementation: Google Tag Manager",
+      "Web Analytics Tools Implementation: Google Analytics 4",
+      "Web Analytics Tools Implementation: Tealium",
+      "Web Analytics Tools Implementation: Hotjar",
+      "Web Analytics Tools Implementation: Best Practices",
+      // "Web Analytics Tools Implementation: Common Mistakes",
+      "Web Analytics Tools Implementation: debugging",
+      "Web Analytics Job Roles",
+      // "Web Analytics Roles - Deep Dive: Data Analyst",
+      "Web Analytics Roles - Deep Dive: Data Engineer",
+      "Web Analytics Roles - Deep Dive: Web Analytics Engineer",
+      "Web Analytics Metrics: Common used metrics and use cases",
+      "Web Analytics Metrics: Business critical metrics",
+      "Web Analytics Metrics: Business specific metrics",
+      "Web Analytics Metrics: Common mistakes",
+      // "Web Analytics Legal Considerations: Current landscape",
+      // "Web Analytics Legal Considerations: Future landscape",
+      // "Web Analytics Legal Considerations: Important legalisations",
+      // "Web Analytics Legal Considerations: Upcoming legalisations",
+      // "Web Analytics Legal Considerations: Tags",
+      // "Web Analytics Legal Considerations: Consent",
+      // "Web Analytics Legal Considerations: Locale Consent differences",
+      // "Web Analytics Legal Considerations: company case study of failing to comply",
+    ];
 
-  let randIndex = Number((Math.random() * topics.length).toFixed(0));
-  console.log(randIndex, topics[randIndex]);
-  promptRef = topics[randIndex];
-  const queryEmbedding = await embed(`${topics[randIndex]}`);
+    let randIndex = Number((Math.random() * topics.length).toFixed(0));
+    console.log(randIndex, topics[randIndex]);
+    promptRef = topics[randIndex];
+    const queryEmbedding = await embed(`${topics[randIndex]}`);
 
-  // console.log({ queryEmbedding });
+    console.log({ queryEmbedding });
 
-  // BUG: Will need data sources before new articles can be reliably generated
-  let results = await WebPDFDoc.aggregate([
-    {
-      $vectorSearch: {
-        queryVector: queryEmbedding,
-        path: "embedding_text",
-        numCandidates: 100,
-        limit: 5,
-        index: "embed_pdf", // replace with your Atlas vector index name
+    // BUG: Will need data sources before new articles can be reliably generated
+    let results = await WebPDFDoc.aggregate([
+      {
+        $vectorSearch: {
+          queryVector: queryEmbedding,
+          path: "embedding_text",
+          numCandidates: 100,
+          limit: 5,
+          index: "embed_pdf", // replace with your Atlas vector index name
+        },
       },
-    },
-  ]);
-  console.log({ results });
+    ]);
+    console.log({ results });
 
-  let scanDocResults = await WebDoc.aggregate([
-    {
-      $vectorSearch: {
-        queryVector: queryEmbedding,
-        path: "embedding_text",
-        numCandidates: 100,
-        limit: 5,
-        index: "embed", // replace with your Atlas vector index name
+    let scanDocResults = await WebDoc.aggregate([
+      {
+        $vectorSearch: {
+          queryVector: queryEmbedding,
+          path: "embedding_text",
+          numCandidates: 100,
+          limit: 5,
+          index: "embed", // replace with your Atlas vector index name
+        },
       },
-    },
-  ]);
+    ]);
 
-  console.log({ results, scanDocResults });
+    console.log({ results, scanDocResults });
 
-  scanDocResults.length < 0
-    ? (results = results.push(...scanDocResults))
-    : null;
+    scanDocResults.length < 0
+      ? (results = results.push(...scanDocResults))
+      : null;
 
-  vectorSearchResults = results.join("\n\n");
+    vectorSearchResults = results.join("\n\n");
 
-  console.log({ results, scanDocResults });
-  const context = results
-    .map(async (doc: any) => {
-      doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
-      console.log("RESEARCH SUMMARISATION", { doc });
-      // if (doc.document)
-      // await promptBasedSummary(topics[randIndex], doc?.document);
-      // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
-      // (await promptBasedSummary(topics[randIndex], doc));
-    })
-    .join("\n\n");
-  console.log({ results, context });
+    console.log({ results, scanDocResults });
+    const context = results
+      .map(async (doc: any) => {
+        doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
+        console.log("RESEARCH SUMMARISATION", { doc });
+        // if (doc.document)
+        // await promptBasedSummary(topics[randIndex], doc?.document);
+        // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
+        // (await promptBasedSummary(topics[randIndex], doc));
+      })
+      .join("\n\n");
+    console.log({ results, context });
 
-  // TODO: Removed till Comfy UI is intergrated
-  //   Title Image Description:
-  //  Main point Image Description:
+    // TODO: Removed till Comfy UI is intergrated
+    //   Title Image Description:
+    //  Main point Image Description:
 
-  const prompt = `      
+    const prompt = `      
   Create a well-structured, engaging, and informative article using this context and prompt. Include line breaks for formatting purposes. Provide references to each fact used in article.
   I also want you to add an approriate Title image description and main point image description for the article - the description should be detailed as it will be parsed to another model for image generation (descriptiosn should not be included in article total length).
   Article Format should following format: 
@@ -202,7 +204,7 @@ ${context}
 Prompt:
 ${topics[randIndex]}
 `;
-  try {
+
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
       model: MODEL,
       prompt,
@@ -475,17 +477,25 @@ async function crawlWebsite(url: any) {
 }
 
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("*/2 * * * *", async () => {
   console.log("[CRON] Running scheduled task at midnight", rejectedToday);
   if (rejectedToday) return; // Skip if rejected all for the day
-  console.log("[CRON] Running scheduled task at midnight 1");
-
-  const content = await generateArticleWebMetrics();
   console.log(
-    "[CRON] Running scheduled task at midnight 2",
-    pendingArticle,
-    content
+    "[CRON] Running scheduled task at midnight 1",
+    generateArticleWebMetrics
   );
+
+  let content;
+  try {
+    content = await generateArticleWebMetrics();
+    console.log(
+      "[CRON] Running scheduled task at midnight 2",
+      pendingArticle,
+      content
+    );
+  } catch (error) {
+    console.log({ error });
+  }
 
   pendingArticle = {
     _id: new ObjectId(),

@@ -11,7 +11,8 @@ const docSchema = new mongoose_1.default.Schema({
     summary: String,
     facts: Array,
     embedding_facts: { type: [Number], index: "2dsphere" },
-    embedding_doc: { type: [Number], index: "2dsphere" },
+    embedding_summary: { type: [Number], index: "2dsphere" },
+    embedding_text: { type: [Number], index: "2dsphere" },
     createdAt: { type: Date, default: Date.now },
 });
 module.exports = mongoose_1.default.model("WebDoc", docSchema);
