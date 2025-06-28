@@ -3,6 +3,7 @@ const uri = process.env.DB_URI!;
 
 export default function (handler: any) {
   return async (req: any, res: any, next: any) => {
+    console.log({ uri });
     try {
       await mongoose.connect(uri, {
         useNewUrlParser: true,
