@@ -130,18 +130,19 @@ async function generateArticleWebMetrics() {
     console.log({ queryEmbedding });
 
     // BUG: Will need data sources before new articles can be reliably generated
-    let results = await WebPDFDoc.aggregate([
-      {
-        $vectorSearch: {
-          queryVector: queryEmbedding,
-          path: "embedding_text",
-          numCandidates: 100,
-          limit: 5,
-          index: "embed_pdf", // replace with your Atlas vector index name
-        },
-      },
-    ]);
-    console.log({ results });
+    let results: any;
+    //  = await WebPDFDoc.aggregate([
+    //   {
+    //     $vectorSearch: {
+    //       queryVector: queryEmbedding,
+    //       path: "embedding_text",
+    //       numCandidates: 100,
+    //       limit: 5,
+    //       index: "embed_pdf", // replace with your Atlas vector index name
+    //     },
+    //   },
+    // ]);
+    // console.log({ results });
 
     let scanDocResults = await WebDoc.aggregate([
       {
