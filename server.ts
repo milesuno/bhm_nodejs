@@ -166,7 +166,11 @@ async function generateArticleWebMetrics() {
     console.log({ results, scanDocResults });
     const context = results
       .map(async (doc: any) => {
-        doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
+        doc.summary
+          ? doc.summary.join("\n\n")
+          : doc.document
+          ? doc.document
+          : doc.text;
         console.log("RESEARCH SUMMARISATION", { doc });
         // if (doc.document)
         // await promptBasedSummary(topics[randIndex], doc?.document);
