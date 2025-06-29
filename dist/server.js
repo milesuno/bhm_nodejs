@@ -325,9 +325,9 @@ function formatEmailTextToHTML(text) {
 }
 async function sendApprovalEmail(article) {
     console.log("SENDING APPROVAL EMAIL", article, {
-        title: article.title,
-        content: article.content,
-        improvedArticle: improvedArticle.content,
+        title: article?.title,
+        content: article?.content,
+        improvedArticle: improvedArticle?.content,
     });
     const approvalUrl = `https://api.businesshealthmetrics.com/approve`;
     const rejectUrl = `https://api.businesshealthmetrics.com/reject`;
@@ -337,13 +337,13 @@ async function sendApprovalEmail(article) {
         to: "milesoluku@gmail.com",
         subject: "Daily Article Approval - BHM",
         html: `
-    <h1>${article.title}</h1>
+    <h1>${article?.title}</h1>
     <h2>Article:</h2>
 
-    <section>${formatEmailTextToHTML(article.content)}</section>
+    <section>${formatEmailTextToHTML(article?.content)}</section>
 
     <div>
-    <a href='${approvalUrl}/${article._id}' style='margin-right:10px;'>✅ Approve</a>
+    <a href='${approvalUrl}/${article?._id}' style='margin-right:10px;'>✅ Approve</a>
     <a href='${rejectUrl}' style='margin-right:10px;'>❌ Reject</a>
     <a href='${rejectAllUrl}'>🚫 Reject All</a>
     </div>
@@ -352,10 +352,10 @@ async function sendApprovalEmail(article) {
     
     <h2>Article Review:</h2>
     
-    <section>${formatEmailTextToHTML(improvedArticle.content)}</section>
+    <section>${formatEmailTextToHTML(improvedArticle?.content)}</section>
 
     <div>
-    <a href='${approvalUrl}/${improvedArticle._id}' style='margin-right:10px;'>✅ Approve</a>
+    <a href='${approvalUrl}/${improvedArticle?._id}' style='margin-right:10px;'>✅ Approve</a>
     <a href='${rejectUrl}' style='margin-right:10px;'>❌ Reject</a>
     <a href='${rejectAllUrl}'>🚫 Reject All</a>
     </div>
@@ -437,35 +437,30 @@ cron.schedule("*/5 * * * *", (0, asyncMiddleware_1.default)(async () => {
     try {
         content = await generateArticleWebMetrics();
         console.log("[CRON] Running scheduled task at midnight 2", pendingArticle, content);
-    }
-    catch (error) {
-        console.log({ error });
-    }
-    pendingArticle = {
-        _id: new mongodb_1.ObjectId(),
-        title: content.includes("**Title:**")
-            ? content.split("**Title:**")[1].split("\n\n")[0]
-            : content?.split("\n\n")[1],
-        content: content.includes("**Title:**")
-            ? content?.split("\n\n").slice(1).join("\n\n")
-            : content?.split("\n\n").slice(1).join("\n\n"),
-        creation: Date.now(),
-    };
-    let review = await articleReviewer(content);
-    pendingReviwedArticle = {
-        _id: new mongodb_1.ObjectId(),
-        title: review.includes("**Improved Article:**") &&
-            review.includes("**Title:**")
-            ? review
-                .split("**Improved Article:**")[1]
-                .split("**Title:**")[1]
-                .split("\n\n")[0]
-            : review.split("\n\n")[1],
-        content: review.split("\n\n").slice(3).join("\n\n"),
-        creation: Date.now(),
-    };
-    console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
-    try {
+        pendingArticle = {
+            _id: new mongodb_1.ObjectId(),
+            title: content.includes("**Title:**")
+                ? content.split("**Title:**")[1].split("\n\n")[0]
+                : content?.split("\n\n")[1],
+            content: content.includes("**Title:**")
+                ? content?.split("\n\n").slice(1).join("\n\n")
+                : content?.split("\n\n").slice(1).join("\n\n"),
+            creation: Date.now(),
+        };
+        let review = await articleReviewer(content);
+        pendingReviwedArticle = {
+            _id: new mongodb_1.ObjectId(),
+            title: review.includes("**Improved Article:**") &&
+                review.includes("**Title:**")
+                ? review
+                    .split("**Improved Article:**")[1]
+                    .split("**Title:**")[1]
+                    .split("\n\n")[0]
+                : review.split("\n\n")[1],
+            content: review.split("\n\n").slice(3).join("\n\n"),
+            creation: Date.now(),
+        };
+        console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
         await sendApprovalEmail(pendingArticle);
     }
     catch (error) {
