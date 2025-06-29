@@ -166,8 +166,8 @@ async function generateArticleWebMetrics() {
     console.log({ results, scanDocResults });
     const context = results
       .map(async (doc: any) => {
-        doc.summary
-          ? doc.summary.join("\n\n")
+        return doc.summary
+          ? doc.summary
           : doc.document
           ? doc.document
           : doc.text;
