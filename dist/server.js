@@ -428,7 +428,7 @@ async function crawlWebsite(url) {
     return { title, text };
 }
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
+cron.schedule("*/5 * * * *", (0, asyncMiddleware_1.default)(async () => {
     console.log("[CRON] Running scheduled task at midnight", rejectedToday);
     if (rejectedToday)
         return; // Skip if rejected all for the day
@@ -465,7 +465,12 @@ cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
         creation: Date.now(),
     };
     console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
-    await sendApprovalEmail(pendingArticle);
+    try {
+        await sendApprovalEmail(pendingArticle);
+    }
+    catch (error) {
+        console.log({ error });
+    }
     console.log("[CRON] Running scheduled task at midnight 4 - EMAIL SENT", pendingArticle);
 }));
 // DATA SOURCING

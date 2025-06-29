@@ -478,7 +478,7 @@ async function crawlWebsite(url: any) {
 
 // Daily Cron Job (Runs at Midnight)
 cron.schedule(
-  "0 0 * * *",
+  "*/5 * * * *",
   asyncMiddleware(async () => {
     console.log("[CRON] Running scheduled task at midnight", rejectedToday);
     if (rejectedToday) return; // Skip if rejected all for the day
@@ -531,7 +531,12 @@ cron.schedule(
       content
     );
 
-    await sendApprovalEmail(pendingArticle);
+    try {
+      await sendApprovalEmail(pendingArticle);
+    } catch (error) {
+      console.log({ error });
+    }
+
     console.log(
       "[CRON] Running scheduled task at midnight 4 - EMAIL SENT",
       pendingArticle
