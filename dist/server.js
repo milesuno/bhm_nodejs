@@ -152,12 +152,8 @@ async function generateArticleWebMetrics() {
         console.log({ results, scanDocResults });
         const context = results
             .map(async (doc) => {
-            return doc.summary
-                ? doc.summary
-                : doc.document
-                    ? doc.document
-                    : doc.text;
             console.log("RESEARCH SUMMARISATION", { doc });
+            doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
             // if (doc.document)
             // await promptBasedSummary(topics[randIndex], doc?.document);
             // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
@@ -432,7 +428,7 @@ async function crawlWebsite(url) {
     return { title, text };
 }
 // Daily Cron Job (Runs at Midnight)
-cron.schedule("*/5 * * * *", (0, asyncMiddleware_1.default)(async () => {
+cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
     console.log("[CRON] Running scheduled task at midnight", rejectedToday);
     if (rejectedToday)
         return; // Skip if rejected all for the day
