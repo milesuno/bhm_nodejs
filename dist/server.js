@@ -38,7 +38,7 @@ const OLLAMA_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434/api/generat
 const MODEL = process.env.MODEL || "gemma:2b"; // Change to a model you prefer
 console.log({ env: process.env.OLLAMA_URL, OLLAMA_URL, MODEL });
 let pendingArticle = null;
-let pendingReviwedArticle = null;
+let pendingReviewedArticle = null;
 let rejectedToday = false;
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -49,7 +49,6 @@ const transporter = nodemailer.createTransport({
     },
 });
 let promptRef;
-let improvedArticle;
 let vectorSearchResults;
 // OLLAMA AGENTS
 async function getRecommendations(article_name) {
@@ -327,7 +326,7 @@ async function sendApprovalEmail(article) {
     console.log("SENDING APPROVAL EMAIL", article, {
         title: article?.title,
         content: article?.content,
-        improvedArticle: improvedArticle?.content,
+        pendingReviewedArticle: pendingReviewedArticle?.content,
     });
     const approvalUrl = `https://api.businesshealthmetrics.com/approve`;
     const rejectUrl = `https://api.businesshealthmetrics.com/reject`;
@@ -352,10 +351,10 @@ async function sendApprovalEmail(article) {
     
     <h2>Article Review:</h2>
     
-    <section>${formatEmailTextToHTML(improvedArticle?.content)}</section>
+    <section>${formatEmailTextToHTML(pendingReviewedArticle?.content)}</section>
 
     <div>
-    <a href='${approvalUrl}/${improvedArticle?._id}' style='margin-right:10px;'>✅ Approve</a>
+    <a href='${approvalUrl}/${pendingReviewedArticle?._id}' style='margin-right:10px;'>✅ Approve</a>
     <a href='${rejectUrl}' style='margin-right:10px;'>❌ Reject</a>
     <a href='${rejectAllUrl}'>🚫 Reject All</a>
     </div>
@@ -448,7 +447,7 @@ cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
             creation: Date.now(),
         };
         let review = await articleReviewer(content);
-        pendingReviwedArticle = {
+        pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
             title: review.includes("**Improved Article:**") &&
                 review.includes("**Title:**")
@@ -559,7 +558,7 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
         creation: Date.now(),
     };
     let review = await articleReviewer(article);
-    pendingReviwedArticle = {
+    pendingReviewedArticle = {
         _id: new mongodb_1.ObjectId(),
         title: review.includes("**Improved Article:**") &&
             review.includes("**Title:**")
@@ -573,7 +572,6 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
     };
     let factCheck = await articleFactChecker(article);
     //Delete?
-    improvedArticle = pendingReviwedArticle;
     console.log({ review, factCheck });
     await sendApprovalEmail(pendingArticle);
     // const article = await generateArticleWebMetrics();
@@ -591,36 +589,36 @@ app.post("/recommend", (0, asyncMiddleware_1.default)(async (req, res) => {
 }));
 // ARTICLE GENERATION
 app.get("/approve/:id", (0, asyncMiddleware_1.default)(async (req, res) => {
-    if (!pendingArticle || !improvedArticle)
+    if (!pendingArticle || !pendingReviewedArticle)
         return res.send("No article pending.");
     console.log({
         params: req.params.id,
         id1: pendingArticle._id,
-        id2: improvedArticle._id,
+        id2: pendingReviewedArticle._id,
     });
     if (pendingArticle._id == req.params.id)
         await new Article({
             title: pendingArticle?.title,
-            content: pendingArticle?.content,
+            content: pendingReviewedArticle?.content,
         }).save();
-    if (improvedArticle._id == req.params.id)
+    if (pendingReviewedArticle._id == req.params.id)
         await new Article({
-            title: improvedArticle?.title,
-            content: improvedArticle?.content,
+            title: pendingReviewedArticle?.title,
+            content: pendingReviewedArticle?.content,
         }).save();
     res.send("Article approved and saved:" + pendingArticle?.content);
     pendingArticle = null;
-    improvedArticle = null;
+    pendingReviewedArticle = null;
 }));
 app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
     if (!pendingArticle)
         return res.send("No article pending.");
     pendingArticle = null;
-    pendingReviwedArticle = null;
+    pendingReviewedArticle = null;
     const content = await generateArticleWebMetrics();
     const reviewedArticle = await articleReviewer(content);
     pendingArticle = content;
-    pendingReviwedArticle = reviewedArticle;
+    pendingReviewedArticle = reviewedArticle;
     await sendApprovalEmail(pendingArticle);
     res.send("Article rejected. New one sent.");
 }));

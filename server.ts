@@ -42,7 +42,7 @@ const OLLAMA_URL =
 const MODEL = process.env.MODEL || "gemma:2b"; // Change to a model you prefer
 console.log({ env: process.env.OLLAMA_URL, OLLAMA_URL, MODEL });
 let pendingArticle: any = null;
-let pendingReviwedArticle: any = null;
+let pendingReviewedArticle: any = null;
 let rejectedToday = false;
 
 const transporter = nodemailer.createTransport({
@@ -54,7 +54,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 let promptRef: any;
-let improvedArticle: any;
 let vectorSearchResults: any;
 
 // OLLAMA AGENTS
@@ -365,7 +364,7 @@ async function sendApprovalEmail(article: any) {
   console.log("SENDING APPROVAL EMAIL", article, {
     title: article?.title,
     content: article?.content,
-    improvedArticle: improvedArticle?.content,
+    pendingReviewedArticle: pendingReviewedArticle?.content,
   });
   const approvalUrl = `https://api.businesshealthmetrics.com/approve`;
   const rejectUrl = `https://api.businesshealthmetrics.com/reject`;
@@ -393,11 +392,11 @@ async function sendApprovalEmail(article: any) {
     
     <h2>Article Review:</h2>
     
-    <section>${formatEmailTextToHTML(improvedArticle?.content)}</section>
+    <section>${formatEmailTextToHTML(pendingReviewedArticle?.content)}</section>
 
     <div>
     <a href='${approvalUrl}/${
-      improvedArticle?._id
+      pendingReviewedArticle?._id
     }' style='margin-right:10px;'>✅ Approve</a>
     <a href='${rejectUrl}' style='margin-right:10px;'>❌ Reject</a>
     <a href='${rejectAllUrl}'>🚫 Reject All</a>
@@ -508,7 +507,7 @@ cron.schedule(
 
       let review = await articleReviewer(content);
 
-      pendingReviwedArticle = {
+      pendingReviewedArticle = {
         _id: new ObjectId(),
         title:
           review.includes("**Improved Article:**") &&
@@ -652,7 +651,7 @@ app.post(
     };
 
     let review = await articleReviewer(article);
-    pendingReviwedArticle = {
+    pendingReviewedArticle = {
       _id: new ObjectId(),
       title:
         review.includes("**Improved Article:**") &&
@@ -668,7 +667,6 @@ app.post(
 
     let factCheck = await articleFactChecker(article);
     //Delete?
-    improvedArticle = pendingReviwedArticle;
 
     console.log({ review, factCheck });
     await sendApprovalEmail(pendingArticle);
@@ -696,28 +694,28 @@ app.post(
 app.get(
   "/approve/:id",
   asyncMiddleware(async (req: any, res: any) => {
-    if (!pendingArticle || !improvedArticle)
+    if (!pendingArticle || !pendingReviewedArticle)
       return res.send("No article pending.");
     console.log({
       params: req.params.id,
       id1: pendingArticle._id,
-      id2: improvedArticle._id,
+      id2: pendingReviewedArticle._id,
     });
     if (pendingArticle._id == req.params.id)
       await new Article({
         title: pendingArticle?.title,
-        content: pendingArticle?.content,
+        content: pendingReviewedArticle?.content,
       }).save();
 
-    if (improvedArticle._id == req.params.id)
+    if (pendingReviewedArticle._id == req.params.id)
       await new Article({
-        title: improvedArticle?.title,
-        content: improvedArticle?.content,
+        title: pendingReviewedArticle?.title,
+        content: pendingReviewedArticle?.content,
       }).save();
 
     res.send("Article approved and saved:" + pendingArticle?.content);
     pendingArticle = null;
-    improvedArticle = null;
+    pendingReviewedArticle = null;
   })
 );
 
@@ -726,12 +724,12 @@ app.get(
   asyncMiddleware(async (req: any, res: any) => {
     if (!pendingArticle) return res.send("No article pending.");
     pendingArticle = null;
-    pendingReviwedArticle = null;
+    pendingReviewedArticle = null;
 
     const content = await generateArticleWebMetrics();
     const reviewedArticle = await articleReviewer(content);
     pendingArticle = content;
-    pendingReviwedArticle = reviewedArticle;
+    pendingReviewedArticle = reviewedArticle;
 
     await sendApprovalEmail(pendingArticle);
     res.send("Article rejected. New one sent.");
