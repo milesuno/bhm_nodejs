@@ -132,7 +132,7 @@ async function articlePlanner(topic: any, context: any) {
   try {
     console.log("RUN MODEL", "deepseek-r1:1.5b");
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "deepseek-r1:1.5b-qwen-distill-q4_K_M",
+      model: "deepseek-r1:8b-llama-distill-q4_K_M",
       prompt,
       // Makes sure that topic is not in previous articles created ${prevArticles}.,
       // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
