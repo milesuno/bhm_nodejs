@@ -261,7 +261,7 @@ ${promptRef}
 `;
         console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "llama3.1:8b-text-q4_K_M",
+            model: "llama3.1:latest",
             prompt,
             // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
