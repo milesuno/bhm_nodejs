@@ -50,6 +50,7 @@ const transporter = nodemailer.createTransport({
 });
 let promptRef;
 let vectorSearchResults;
+let factCheck;
 // OLLAMA AGENTS
 async function getRecommendations(article_name) {
     // Fetch ALL Articles for DB
@@ -69,8 +70,72 @@ async function getRecommendations(article_name) {
         return "An error occurred while fetching recommendations.";
     }
 }
+function markdownToHtml(markdown) {
+    return (markdown
+        // Headings
+        .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+        .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+        .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+        // Bold & Italics
+        .replace(/\*\*\*(.*?)\*\*\*/gim, "<strong><em>$1</em></strong>")
+        .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
+        .replace(/\*(.*?)\*/gim, "<em>$1</em>")
+        // Inline code
+        .replace(/`(.*?)`/gim, "<code>$1</code>")
+        // Links
+        .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
+        // Line breaks
+        .replace(/\n$/gim, "<br />")
+        // Lists
+        .replace(/^\- (.*$)/gim, "<li>$1</li>")
+        .replace(/(<li>.*<\/li>)/gim, "<ul>$1</ul>") // Wrap single list items with <ul>
+        // Paragraphs
+        .replace(/^\s*([^<\n][^\n]+)\s*$/gm, "<p>$1</p>")
+        .trim());
+}
+async function articlePlanner(topic, context) {
+    console.log("Article Planner", { topic, context });
+    let prompt = `
+  Create a Plan for a article. The topic is "${topic}". 
+
+  Use the following data context for research when creating the article plan - add an index of references of the facts included in article plan: 
+  ${context} 
+
+  Expected OUTPUT:
+  Title
+
+  Introduction
+  
+  Main points
+  
+  Conclusion
+
+  Index
+  `;
+    try {
+        console.log("RUN MODEL", "deepseek-r1:1.5b");
+        const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
+            model: "deepseek-r1:1.5b-qwen-distill-q4_K_M",
+            prompt,
+            // Makes sure that topic is not in previous articles created ${prevArticles}.,
+            // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
+            stream: false,
+        });
+        // for (let chunk in response) {
+        //   console.log({ chunk });
+        // }
+        console.log({ response });
+        // loop on response an console chunks
+        return response.data.response.trim();
+    }
+    catch (error) {
+        console.error("Error:", error);
+        return "An error occurred while generating the article.";
+    }
+}
 async function generateArticleWebMetrics() {
     console.log("generateArticleWebMetrics");
+    let MD = 'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
     try {
         let topics = [
             "Web Analytics: Current Landscape",
@@ -115,10 +180,10 @@ async function generateArticleWebMetrics() {
             // "Web Analytics Legal Considerations: company case study of failing to comply",
         ];
         let randIndex = Number((Math.random() * topics.length).toFixed(0));
-        console.log(randIndex, topics[randIndex]);
         promptRef = topics[randIndex];
-        const queryEmbedding = await embed(`${topics[randIndex]}`);
-        console.log({ queryEmbedding });
+        console.log(randIndex, { promptRef });
+        const queryEmbedding = await embed(`${promptRef}`);
+        // console.log({ queryEmbedding });
         // BUG: Will need data sources before new articles can be reliably generated
         let results = await WebPDFDoc.aggregate([
             {
@@ -126,69 +191,77 @@ async function generateArticleWebMetrics() {
                     queryVector: queryEmbedding,
                     path: "embedding_text",
                     numCandidates: 100,
-                    limit: 5,
+                    limit: 3,
                     index: "embed_pdf", // replace with your Atlas vector index name
                 },
             },
         ]);
-        console.log({ results });
+        // console.log({ results });
         let scanDocResults = await WebDoc.aggregate([
             {
                 $vectorSearch: {
                     queryVector: queryEmbedding,
                     path: "embedding_text",
                     numCandidates: 100,
-                    limit: 5,
+                    limit: 3,
                     index: "embed", // replace with your Atlas vector index name
                 },
             },
         ]);
-        console.log({ results, scanDocResults });
+        // console.log({ results, scanDocResults });
         scanDocResults.length < 0
             ? (results = results.push(...scanDocResults))
             : null;
-        vectorSearchResults = results.join("\n\n");
+        // vectorSearchResults = results.join("\n\n");
         console.log({ results, scanDocResults });
-        const context = results
-            .map(async (doc) => {
+        vectorSearchResults = results
+            .map((doc) => {
             console.log("RESEARCH SUMMARISATION", { doc });
-            doc.summary ? doc.summary : doc.document ? doc.document : doc.text;
+            return doc.summary
+                ? doc.summary
+                : doc.document
+                    ? doc.document
+                    : doc.text;
             // if (doc.document)
             // await promptBasedSummary(topics[randIndex], doc?.document);
             // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
             // (await promptBasedSummary(topics[randIndex], doc));
         })
             .join("\n\n");
-        console.log({ results, context });
+        // console.log({ results, vectorSearchResults });
         // TODO: Removed till Comfy UI is intergrated
         //   Title Image Description:
         //  Main point Image Description:
+        let articlePlan = await articlePlanner(promptRef, vectorSearchResults);
+        console.log({ articlePlan });
+        // OUTPUT -> Prompt
         const prompt = `      
-  Create a well-structured, engaging, and informative article using this context and prompt. Include line breaks for formatting purposes. Provide references to each fact used in article.
-  I also want you to add an approriate Title image description and main point image description for the article - the description should be detailed as it will be parsed to another model for image generation (descriptiosn should not be included in article total length).
-  Article Format should following format: 
-  
-  Title:
+  Create a well-structured, engaging, and informative article using this context and prompt.
 
-  Introduction:
+  I also want you to add an approriate Title image description and main point image description for the article - the description should be detailed as it will be parsed to another model for image generation (descriptsion should not be included in article total length).
   
-  Main point Image Description:
+  
+  Article should be created using the following Article Plan:
+  ${articlePlan}
 
-  main points:
-  
-  conclusion:
-  
+  Article should use Markdown for syntax - here is a cheatsheet for Markdown:
+  ${MD}
+
+
   Use examples if required for explaining complex topics.
+
   Keep the length to a 10 mins read.
 
-Additional Context:
-${context}
+
+Context:
+${vectorSearchResults}
 
 Prompt:
-${topics[randIndex]}
+${promptRef}
 `;
+        console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: MODEL,
+            model: "llama3.1:8b-text-q4_K_M",
             prompt,
             // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
@@ -274,10 +347,16 @@ async function promptBasedSummary(text) {
     return res.data.response.trim();
 }
 async function factFinder(text) {
-    const prompt = `Extract 5 to 10 key factual points from the following text content :\n\n"${text}"\n\n
-  Each of the fact be number bullet points only - DO NOT include ANY facts the about: dedications, authors or writers. 
+    const prompt = `
+  INSTRUCTIONS:
+  Extract 5 to 10 key factual points from the following text content :\n\n"${text}"\n\n
+  Each of the fact be number bullet points only.
+  
+  EXCLUSIONS:
+  DO NOT include ANY facts the about: dedications, authors or writers. 
   DO NOT include any sub-bullet points in the bullet points list.
   
+  EXPECTED OUTPUT:
   Your OUTPUT should follow this structure
   "1. Fact#1, 2. Fact#2, 3. Fact#3, ..."
   `;
@@ -339,7 +418,7 @@ async function sendApprovalEmail(article) {
     <h1>${article?.title}</h1>
     <h2>Article:</h2>
 
-    <section>${formatEmailTextToHTML(article?.content)}</section>
+    <section>${markdownToHtml(article?.content)}</section>
 
     <div>
     <a href='${approvalUrl}/${article?._id}' style='margin-right:10px;'>✅ Approve</a>
@@ -351,31 +430,47 @@ async function sendApprovalEmail(article) {
     
     <h2>Article Review:</h2>
     
-    <section>${formatEmailTextToHTML(pendingReviewedArticle?.content)}</section>
+    <section>${markdownToHtml(pendingReviewedArticle?.content)}</section>
 
     <div>
     <a href='${approvalUrl}/${pendingReviewedArticle?._id}' style='margin-right:10px;'>✅ Approve</a>
     <a href='${rejectUrl}' style='margin-right:10px;'>❌ Reject</a>
     <a href='${rejectAllUrl}'>🚫 Reject All</a>
     </div>
-
            `,
     };
     await transporter.sendMail(mailOptions);
     console.log("SENT APPROVAL EMAIL");
 }
 async function articleReviewer(article) {
+    let MD = 'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
+    console.log({ promptRef2: promptRef, vectorSearchResults });
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: MODEL,
-            prompt: `Based on this prompt: ${promptRef} how well does this article cover the topic? Rate it between 0-1. This is the article to review: ${article}. 
+            model: "deepseek-r1:1.5b-qwen-distill-q4_K_M",
+            prompt: `
+      Based on this prompt: ${promptRef} how well does this article cover the topic? Rate it between 0-1. 
+      
       Create a improved verison of the article based on your suggestions. 
+            
+      The Improved Article should follow this syntax: ${MD}.
 
-      Output:
+      This is the article to review: ${article}. 
+
+
+
+
+      Output should follow this format:
+
+      Number Rating
 
       Suggestions
 
       Improved Article
+
+      Facts
+
+      Fact References
       `,
             stream: false,
         });
@@ -388,16 +483,17 @@ async function articleReviewer(article) {
     }
 }
 async function articleFactChecker(article) {
+    let MD = 'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: MODEL,
+            model: "deepseek-r1:8b",
             prompt: `Review this article throughly and fact check the information in the article using the provide context.
 
 
       Article to review: ${article}.
       Context: ${vectorSearchResults}
       
-      Expected output format:
+      Expected output format - ${MD}:
 
       Review: 
 
@@ -570,9 +666,9 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
         content: review.split("\n\n").slice(3).join("\n\n"),
         creation: Date.now(),
     };
-    let factCheck = await articleFactChecker(article);
+    // factCheck = await articleFactChecker(review);
     //Delete?
-    console.log({ review, factCheck });
+    console.log({ review, article });
     await sendApprovalEmail(pendingArticle);
     // const article = await generateArticleWebMetrics();
     res
@@ -609,16 +705,37 @@ app.get("/approve/:id", (0, asyncMiddleware_1.default)(async (req, res) => {
     res.send("Article approved and saved:" + pendingArticle?.content);
     pendingArticle = null;
     pendingReviewedArticle = null;
+    factCheck = null;
 }));
 app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
     if (!pendingArticle)
         return res.send("No article pending.");
     pendingArticle = null;
     pendingReviewedArticle = null;
-    const content = await generateArticleWebMetrics();
-    const reviewedArticle = await articleReviewer(content);
-    pendingArticle = content;
-    pendingReviewedArticle = reviewedArticle;
+    const article = await generateArticleWebMetrics();
+    const review = await articleReviewer(article);
+    pendingArticle = {
+        _id: new mongodb_1.ObjectId(),
+        title: article.includes("**Title:**")
+            ? article.split("**Title:**")[1].split("\n\n")[0]
+            : article?.split("\n\n")[1],
+        content: article.includes("**Title:**")
+            ? article?.split("\n\n").slice(1).join("\n\n")
+            : article?.split("\n\n").slice(1).join("\n\n"),
+        creation: Date.now(),
+    };
+    pendingReviewedArticle = {
+        _id: new mongodb_1.ObjectId(),
+        title: review.includes("**Improved Article:**") &&
+            review.includes("**Title:**")
+            ? review
+                .split("**Improved Article:**")[1]
+                .split("**Title:**")[1]
+                .split("\n\n")[0]
+            : review.split("\n\n")[1],
+        content: review.split("\n\n").slice(3).join("\n\n"),
+        creation: Date.now(),
+    };
     await sendApprovalEmail(pendingArticle);
     res.send("Article rejected. New one sent.");
 }));
