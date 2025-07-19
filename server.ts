@@ -506,7 +506,7 @@ async function articleReviewer(article: any) {
   console.log({ promptRef2: promptRef, vectorSearchResults });
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "deepseek-r1:1.5b-qwen-distill-q4_K_M",
+      model: "deepseek-r1:8b-llama-distill-q4_K_M",
       prompt: `
       Based on this prompt: ${promptRef} how well does this article cover the topic? Rate it between 0-1. 
       
