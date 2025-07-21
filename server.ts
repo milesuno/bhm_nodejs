@@ -265,28 +265,40 @@ async function generateArticleWebMetrics() {
     console.log({ articlePlan });
     // OUTPUT -> Prompt
     const prompt = `      
+  ROLE:
+  
+  REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt.
+
+  Context:
+  ${vectorSearchResults}
+
+  Prompt:
+  ${promptRef}
 
   I also want you to add an approriate Title image description and main point image description for the article - the description should be detailed as it will be parsed to another model for image generation (descriptsion should not be included in article total length).
   
-  
-  Article should be created using the following Article Plan:
+  Article should be constructed using the following Article Plan:
   ${articlePlan}
 
-  Article should use Markdown for syntax - here is a cheatsheet for Markdown:
+  The Article should use Markdown for syntax - here is a cheatsheet for Markdown:
   ${MD}
-
 
   Use examples if required for explaining complex topics.
 
   Keep the length to a 10 mins read.
 
 
-Context:
-${vectorSearchResults}
+  EXPECTED OUTPUT:
+  Title
 
-Prompt:
-${promptRef}
+  Introduction
+  
+  Main points
+  
+  Conclusion
+
+  Index
 `;
 
     console.log("RUN MODEL", MODEL);
