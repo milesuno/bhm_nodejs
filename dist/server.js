@@ -217,11 +217,7 @@ async function generateArticleWebMetrics() {
         vectorSearchResults = results
             .map((doc) => {
             console.log("RESEARCH SUMMARISATION", { doc });
-            return doc.summary
-                ? doc.summary
-                : doc.document
-                    ? doc.document
-                    : doc.text;
+            return doc.document ? doc.document : doc.text;
             // if (doc.document)
             // await promptBasedSummary(topics[randIndex], doc?.document);
             // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
@@ -237,7 +233,8 @@ async function generateArticleWebMetrics() {
         // OUTPUT -> Prompt
         const prompt = `      
   ROLE:
-  
+  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.
+
   REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt.
 
