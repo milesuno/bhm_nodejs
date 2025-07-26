@@ -94,26 +94,31 @@ function markdownToHtml(markdown) {
         .trim());
 }
 async function articlePlanner(topic, context) {
-    console.log("Article Planner", { topic, context });
+    console.log("Article Planner", { topic });
     let prompt = `
-  Create a Plan for a article. The topic is "${topic}". 
+  Create a DETAILED Plan for an article. Use the follow as the Article topic "${topic}". 
 
-  Use the following data context for research when creating the article plan - add an index of references of the facts included in article plan: 
+  Use the following data as context for your research when creating the article plan - add an index of references of the facts included in article plan: 
   ${context} 
 
-  Expected OUTPUT:
+  OUTPUT Should in this format:
   Title
 
   Introduction
   
-  Main points
+  Article Body
   
   Conclusion
 
-  Index
+  References
+
+  EXCLUDE: All reference to "Chapter".
+
+  EXCLUDE: All reference to Author, Publishing, Production  of text from Article Body.
+
   `;
     try {
-        console.log("RUN MODEL", "deepseek-r1:1.5b");
+        console.log("RUN MODEL", "deepseek-r1:8b-llama-distill-q4_K_M ");
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
             model: "deepseek-r1:8b-llama-distill-q4_K_M",
             prompt,
@@ -133,7 +138,7 @@ async function articlePlanner(topic, context) {
         return "An error occurred while generating the article.";
     }
 }
-async function generateArticleWebMetrics() {
+async function generateArticleWebMetrics(reqPrompt = undefined) {
     console.log("generateArticleWebMetrics");
     let MD = 'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
     try {
@@ -191,7 +196,7 @@ async function generateArticleWebMetrics() {
                     queryVector: queryEmbedding,
                     path: "embedding_text",
                     numCandidates: 100,
-                    limit: 3,
+                    limit: 5,
                     index: "embed_pdf", // replace with your Atlas vector index name
                 },
             },
@@ -203,7 +208,7 @@ async function generateArticleWebMetrics() {
                     queryVector: queryEmbedding,
                     path: "embedding_text",
                     numCandidates: 100,
-                    limit: 3,
+                    limit: 5,
                     index: "embed", // replace with your Atlas vector index name
                 },
             },
@@ -216,8 +221,12 @@ async function generateArticleWebMetrics() {
         console.log({ results, scanDocResults });
         vectorSearchResults = results
             .map((doc) => {
-            console.log("RESEARCH SUMMARISATION", { doc });
-            return doc.document ? doc.document : doc.text;
+            console.log("RESEARCH SUMMARISATION", { doc: doc.title });
+            return doc.summary
+                ? doc.summary
+                : doc.document
+                    ? doc.document
+                    : doc.text;
             // if (doc.document)
             // await promptBasedSummary(topics[randIndex], doc?.document);
             // if (doc.text) await promptBasedSummary(topics[randIndex], doc?.text);
@@ -228,26 +237,25 @@ async function generateArticleWebMetrics() {
         // TODO: Removed till Comfy UI is intergrated
         //   Title Image Description:
         //  Main point Image Description:
-        let articlePlan = await articlePlanner(promptRef, vectorSearchResults);
-        console.log({ articlePlan });
+        // let articlePlan = await articlePlanner(promptRef, vectorSearchResults);
+        // console.log({ articlePlan });
         // OUTPUT -> Prompt
         const prompt = `      
   ROLE:
-  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.
-
+  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles. 
+  
+  WHEN APPLICABLE referring the APPROPRIATE BHM services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/
+   
   REQUIREMENTS:
-  Create a well-structured, engaging, and informative article using this context and prompt.
-
+  Create a well-structured, engaging, and informative article using this context and prompt. 
   Context:
   ${vectorSearchResults}
 
   Prompt:
-  ${promptRef}
+  ${reqPrompt || promptRef}
 
   I also want you to add an approriate Title image description and main point image description for the article - the description should be detailed as it will be parsed to another model for image generation (descriptsion should not be included in article total length).
   
-  Article should be constructed using the following Article Plan:
-  ${articlePlan}
 
   The Article should use Markdown for syntax - here is a cheatsheet for Markdown:
   ${MD}
@@ -262,15 +270,21 @@ async function generateArticleWebMetrics() {
 
   Introduction
   
-  Main points
+  Article Body
+
+  Real Life Application
   
   Conclusion
 
-  Index
+  EXCLUDE: All reference to "Chapter".
+  EXCLUDE: All reference to Author, Publishing, Production  of text from Article Body.
+
+  REMOVE: Number from each point in Article Body.
+
 `;
         console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "llama3.1:latest",
+            model: "gemma3:4b-it-q4_K_M",
             prompt,
             // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
@@ -327,27 +341,15 @@ async function summarize(text) {
 //TODO: Consider reprocessing DOC using this are Summarising agent
 // This will lower compute at time of request
 async function promptBasedSummary(text) {
-    const new_prompt = `Use the provided text to create upto 5 topic related facts for each Topic found in the text (maximum 750 words).
-    
+    const new_prompt = `Use the provided text to create upto 5000 word summary. 
   Here is the text to summarise:\n\n"${text}".
 
-  EXCLUDE any Exercises provided in text from OUTPUT
-
-  Summary should follow this provided format:
-  
-  Topic Name #1:
-  - 1. Topic Related Fact #1
-  - 2. Topic Related Fact #2
-  - 3. Topic Related Fact #3
-
-    Topic Name #2:
-  - 1. Topic Related Fact #1
-  - 2. Topic Related Fact #2
-  - 3. Topic Related Fact #3
-
+  EXCLUDE from Summary:
+  - any workbook Exercises provided in text from OUTPUT
+  - any information that is not related to the text subject: Author, Publishing details, etc.
   `;
     const res = await axios.post(`${OLLAMA_URL}/api/generate`, {
-        model: MODEL,
+        model: "deepseek-r1:8b-0528-qwen3-q4_K_M",
         prompt: new_prompt,
         stream: false,
     });
@@ -456,9 +458,17 @@ async function articleReviewer(article) {
     console.log({ promptRef2: promptRef, vectorSearchResults });
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "deepseek-r1:8b-llama-distill-q4_K_M",
+            model: "gemma3:12b-it-q4_K_M",
             prompt: `
-      Based on this prompt: ${promptRef} how well does this article cover the topic? Rate it between 0-1. 
+
+      ROLE:
+      You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
+      Your job is ensure the article provide is high quality and informative. 
+      Your job is too ensure that Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      Your Job is too ensure the Article is SEO Friendly.
+
+      REQUIREMENTS:
+      Based on this prompt: ${promptRef} how well does this article cover the topic? Create a Number Rating it between 0-1. 
       
       Create a improved verison of the article based on your suggestions. 
             
@@ -471,7 +481,7 @@ async function articleReviewer(article) {
 
       Output should follow this format:
 
-      Number Rating
+      Number Rating (0-1)
 
       Suggestions
 
@@ -616,8 +626,8 @@ app.post("/upload", (0, asyncMiddleware_1.default)(async (req, res) => {
         const title = file.originalFilename;
         // const chunks = chunkText(parsed.text);
         const summary = await promptBasedSummary(parsed.text);
-        const keyFacts = await factFinder(parsed.text);
-        const embedding_facts = await embed(keyFacts);
+        // const keyFacts = await factFinder(parsed.text);
+        // const embedding_facts = await embed(keyFacts); // DEL
         const embedding_summary = await embed(summary);
         const embedding_text = await embed(parsed.text);
         console.log({
@@ -635,8 +645,8 @@ app.post("/upload", (0, asyncMiddleware_1.default)(async (req, res) => {
             // page: i + 1,
             text: parsed.text,
             summary,
-            facts: keyFacts.split("\n"),
-            embedding_facts,
+            // facts: keyFacts.split("\n"),
+            // embedding_facts,
             embedding_text,
             embedding_summary,
         }).save();
@@ -647,42 +657,68 @@ app.post("/upload", (0, asyncMiddleware_1.default)(async (req, res) => {
 }));
 // OLLAMA ROUTES
 app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) => {
-    // const { topic } = req.body;
-    // if (!topic) {
-    //   return res.status(400).json({ error: "Missing topic parameter" });
-    // }
-    const article = await generateArticleWebMetrics();
-    pendingArticle = {
-        _id: new mongodb_1.ObjectId(),
-        title: article.includes("**Title:**")
-            ? article.split("**Title:**")[1].split("\n\n")[0]
-            : article?.split("\n\n")[1],
-        content: article.includes("**Title:**")
-            ? article?.split("\n\n").slice(1).join("\n\n")
-            : article?.split("\n\n").slice(1).join("\n\n"),
-        creation: Date.now(),
-    };
-    let review = await articleReviewer(article);
-    pendingReviewedArticle = {
-        _id: new mongodb_1.ObjectId(),
-        title: review.includes("**Improved Article:**") &&
-            review.includes("**Title:**")
-            ? review
-                .split("**Improved Article:**")[1]
-                .split("**Title:**")[1]
-                .split("\n\n")[0]
-            : review.split("\n\n")[1],
-        content: review.split("\n\n").slice(3).join("\n\n"),
-        creation: Date.now(),
-    };
-    // factCheck = await articleFactChecker(review);
-    //Delete?
-    console.log({ review, article });
-    await sendApprovalEmail(pendingArticle);
-    // const article = await generateArticleWebMetrics();
-    res
-        .status(200)
-        .send({ pendingArticle, facts: pendingArticle.facts, review });
+    const { topic } = req.body;
+    if (!topic) {
+        // return res.status(400).json({ error: "Missing topic parameter" });
+        const article = await generateArticleWebMetrics();
+        pendingArticle = {
+            _id: new mongodb_1.ObjectId(),
+            title: article.includes("**Title:**")
+                ? article.split("**Title:**")[1].split("\n\n")[0]
+                : article?.split("\n\n")[1],
+            content: article.includes("**Title:**")
+                ? article?.split("\n\n").slice(1).join("\n\n")
+                : article?.split("\n\n").slice(1).join("\n\n"),
+            creation: Date.now(),
+        };
+        let review = await articleReviewer(article);
+        pendingReviewedArticle = {
+            _id: new mongodb_1.ObjectId(),
+            title: review.includes("## Improved Article")
+                ? review.split("## Improved Article")[1].split("\n\n")[0]
+                : review.split("\n\n")[0],
+            content: review,
+            creation: Date.now(),
+        };
+        // factCheck = await articleFactChecker(review);
+        //Delete?
+        console.log({ review, article });
+        await sendApprovalEmail(pendingArticle);
+        // const article = await generateArticleWebMetrics();
+        res
+            .status(200)
+            .send({ pendingArticle, facts: pendingArticle.facts, review });
+    }
+    else {
+        const article = await generateArticleWebMetrics(topic);
+        pendingArticle = {
+            _id: new mongodb_1.ObjectId(),
+            title: article.includes("**Title:**")
+                ? article.split("**Title:**")[1].split("\n\n")[0]
+                : article?.split("\n\n")[1],
+            content: article.includes("**Title:**")
+                ? article?.split("\n\n").slice(1).join("\n\n")
+                : article?.split("\n\n").slice(1).join("\n\n"),
+            creation: Date.now(),
+        };
+        let review = await articleReviewer(article);
+        pendingReviewedArticle = {
+            _id: new mongodb_1.ObjectId(),
+            title: review.includes("## Improved Article")
+                ? review.split("## Improved Article")[1].split("\n\n")[0]
+                : review.split("\n\n")[0],
+            content: review,
+            creation: Date.now(),
+        };
+        // factCheck = await articleFactChecker(review);
+        //Delete?
+        console.log({ review, article });
+        await sendApprovalEmail(pendingArticle);
+        // const article = await generateArticleWebMetrics();
+        res
+            .status(200)
+            .send({ pendingArticle, facts: pendingArticle.facts, review });
+    }
 }));
 app.post("/recommend", (0, asyncMiddleware_1.default)(async (req, res) => {
     const { article_name } = req.body;
@@ -735,14 +771,10 @@ app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
     };
     pendingReviewedArticle = {
         _id: new mongodb_1.ObjectId(),
-        title: review.includes("**Improved Article:**") &&
-            review.includes("**Title:**")
-            ? review
-                .split("**Improved Article:**")[1]
-                .split("**Title:**")[1]
-                .split("\n\n")[0]
-            : review.split("\n\n")[1],
-        content: review.split("\n\n").slice(3).join("\n\n"),
+        title: review.includes("## Improved Article")
+            ? review.split("## Improved Article")[1].split("\n\n")[0]
+            : review.split("\n\n")[0],
+        content: review,
         creation: Date.now(),
     };
     await sendApprovalEmail(pendingArticle);
