@@ -460,11 +460,10 @@ async function articleReviewer(article) {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
             model: "gemma3:12b-it-q4_K_M",
             prompt: `
-
       ROLE:
       You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
       Your job is ensure the article provide is high quality and informative. 
-      Your job is too ensure that EMBEDDED Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      Your job is too ensure that Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
       Your Job is too ensure the Article is SEO Friendly.
 
       REQUIREMENTS:
@@ -691,6 +690,7 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
     }
     else {
         const article = await generateArticleWebMetrics(topic);
+        promptRef = topic;
         pendingArticle = {
             _id: new mongodb_1.ObjectId(),
             title: article.includes("**Title:**")
