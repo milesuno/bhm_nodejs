@@ -458,7 +458,7 @@ async function articleReviewer(article) {
     console.log({ promptRef2: promptRef, vectorSearchResults });
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "gemma3:12b-it-q4_K_M",
+            model: "deepseek-r1:8b-llama-distill-q4_K_M",
             prompt: `
 
       ROLE:
