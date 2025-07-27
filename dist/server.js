@@ -284,7 +284,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 `;
         console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "gemma3:12b-it-q4_K_M",
+            model: "gemma3:4b-it-q4_K_M",
             prompt,
             // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
