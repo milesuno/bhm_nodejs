@@ -464,7 +464,7 @@ async function articleReviewer(article) {
       ROLE:
       You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
       Your job is ensure the article provide is high quality and informative. 
-      Your job is too ensure that Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      Your job is too ensure that EMBEDDED Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
       Your Job is too ensure the Article is SEO Friendly.
 
       REQUIREMENTS:
