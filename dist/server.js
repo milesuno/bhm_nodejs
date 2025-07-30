@@ -244,7 +244,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   ROLE:
   You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles. 
   
-  WHEN APPLICABLE referring the APPROPRIATE BHM services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/
+  WHEN topics are complex add a Call to Action (CTA) - use the APPROPRIATE BHM Web Analytics services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
    
   REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
@@ -284,7 +284,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 `;
         console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "gemma3:4b-it-q4_K_M",
+            model: "gemma3:12b-it-q4_K_M",
             prompt,
             // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
@@ -458,7 +458,7 @@ async function articleReviewer(article) {
     console.log({ promptRef2: promptRef, vectorSearchResults });
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "gemma3:27b-it-q4_K_M",
+            model: "gemma3:12b-it-q4_K_M",
             prompt: `
       ROLE:
       You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
