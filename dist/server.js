@@ -244,7 +244,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   ROLE:
   You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles. 
   
-  WHEN topics are complex add a Call to Action (CTA) - use the APPROPRIATE BHM Web Analytics services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
+  WHEN topics are complex add a embedded Call to Action (CTA) using Markdown Syntax- use the APPROPRIATE BHM Web Analytics services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
    
   REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
@@ -463,8 +463,8 @@ async function articleReviewer(article) {
       ROLE:
       You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
       Your job is too ensure the article provide is high quality and informative. 
-      Your job is too ensure that Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
-      IF CTA are not present in Article - add a CTA for BHM too the improved version.
+      Your job is too ensure that embedded Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      IF CTA are not present in Article - add a embedded CTA for BHM too the improved version using Markdown Syntax.
       Your Job is too ensure the Article is SEO Friendly.
 
       REQUIREMENTS:
