@@ -299,7 +299,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 
   Introduction
   
-  Article Body
+  Article Body (with CTA)
 
   Real Life Application
   
@@ -523,7 +523,7 @@ async function articleReviewer(article: any) {
       You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
       Your job is too ensure the article provide is high quality and informative. 
       Your job is too ensure that Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
-      IF CTA are not present in Article added them too the improved version.
+      IF CTA are not present in Article - add a CTA for BHM too the improved version.
       Your Job is too ensure the Article is SEO Friendly.
 
       REQUIREMENTS:
