@@ -271,9 +271,9 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
     // OUTPUT -> Prompt
     const prompt = `      
   ROLE:
-  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles. 
+  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.  You should add Business Health Metrics CTA in the Article were relevant - as the articles should be informative and promotional for Business Health Metrics (BHM).
   
-  WHEN topics are complex add a embedded Call to Action (CTA) using Markdown Syntax- use the APPROPRIATE BHM Web Analytics services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
+  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
    
   REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
@@ -314,7 +314,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 
     console.log("RUN MODEL", MODEL);
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "gemma3:12b-it-q4_K_M",
+      model: "gemma3:4b-it-q4_K_M",
       prompt,
       // Makes sure that topic is not in previous articles created ${prevArticles}.,
       // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
@@ -517,13 +517,13 @@ async function articleReviewer(article: any) {
   console.log({ promptRef2: promptRef, vectorSearchResults });
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "gemma3:12b-it-q4_K_M",
+      model: "gemma3:4b-it-q4_K_M",
       prompt: `
       ROLE:
       You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
       Your job is too ensure the article provide is high quality and informative. 
       Your job is too ensure that embedded Call to Actions are included APPROPRIATELY with the Article provided. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
-      IF CTA are not present in Article - add a embedded CTA for BHM too the improved version using Markdown Syntax.
+      IF Business Health Metric CTA are not present in Article - add an embedded BusinessHealthMetric.com (BHM) CTA too the improved version using Markdown Syntax.
       Your Job is too ensure the Article is SEO Friendly.
 
       REQUIREMENTS:
