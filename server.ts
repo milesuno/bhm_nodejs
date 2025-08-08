@@ -271,7 +271,11 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
     // OUTPUT -> Prompt
     const prompt = `      
   ROLE:
-  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.  You should add Business Health Metrics Call to Action Links (CTA Links) in the Article were relevant. The articles should be informative and promotional for Business Health Metrics (BHM).
+  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.  
+  
+  You should add Business Health Metrics "Call to Action" Links (CTA Links) in the Article using MarkDown. 
+  
+  The articles should be informative and promotional for Business Health Metrics (BHM).
   
   WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded link - BHM services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
    
@@ -520,10 +524,14 @@ async function articleReviewer(article: any) {
       model: "deepseek-r1:8b-llama-distill-q4_K_M",
       prompt: `
       ROLE:
-      You are a Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
+      You are an Expert Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
+
       Your job is too ensure the article provide is high quality and informative. 
-      Your job is too add embedded Call to Actions to the Improved Article IF there is no CTA included within the Article provided. 
+
+      You should add Business Health Metrics "Call to Action" Links (CTA Links) in the Article using MarkDown to the Improved Article IF there is no CTA included within the Article provided.
+
       IF Business Health Metric CTAs are not present in Article - add an embedded LINK CTA too the Improved Article using Markdown Syntax. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      
       Your Job is too ensure the Article is SEO Friendly.
 
       REQUIREMENTS:
