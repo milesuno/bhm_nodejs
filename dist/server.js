@@ -493,7 +493,7 @@ async function articleReviewer(article) {
 
       Suggestions
 
-      Improved Article
+      Improved Article (with CTA's added)
 
       Facts
 
