@@ -242,9 +242,9 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
         // OUTPUT -> Prompt
         const prompt = `      
   ROLE:
-  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.  You should add Business Health Metrics CTA in the Article were relevant - as the articles should be informative and promotional for Business Health Metrics (BHM).
+  You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.  You should add Business Health Metrics Call to Action Links (CTA Links) in the Article were relevant. The articles should be informative and promotional for Business Health Metrics (BHM).
   
-  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
+  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded link - BHM services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
    
   REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
