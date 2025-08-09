@@ -264,6 +264,9 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   The Article should use Markdown for syntax - here is a cheatsheet for Markdown:
   ${MD}
 
+  The Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+
+
   Use examples if required for explaining complex topics.
 
   Keep the length to a 10 mins read.
