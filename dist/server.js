@@ -483,7 +483,7 @@ async function articleReviewer(article) {
             
       The Improved Article should follow this syntax: ${MD}.
 
-      The Improved Article should contain Embedded Call to Action Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      The Improved Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
 
       This is the article to review: ${article}. 
 
