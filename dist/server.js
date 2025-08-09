@@ -248,7 +248,11 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   
   The articles should be informative and promotional for Business Health Metrics (BHM).
   
-  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded link - BHM services: Consultancy, Implementation and hyperlink with the follow URL: https://www.businesshealthmetrics.com/consultancy, https://www.businesshealthmetrics.com/implementation.
+  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded link - Business Health Metrics (BHM) services are: 
+    - Consultancy:  https://www.businesshealthmetrics.com/consultancy
+    - Implementation: https://www.businesshealthmetrics.com/implrmentation
+    - Implementation Retainer: https://www.businesshealthmetrics.com/retainer
+
    
   REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
@@ -486,7 +490,10 @@ async function articleReviewer(article) {
             
       The Improved Article should follow this syntax: ${MD}.
 
-      The Improved Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      The Improved Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: 
+      - Consultancy:  https://www.businesshealthmetrics.com/consultancy
+      - Implementation: https://www.businesshealthmetrics.com/implrmentation
+      - Implementation Retainer: https://www.businesshealthmetrics.com/retainer
 
       This is the article to review: ${article}. 
 
