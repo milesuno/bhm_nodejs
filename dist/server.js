@@ -469,9 +469,10 @@ async function articleReviewer(article) {
 
       Your job is too ensure the article provide is high quality and informative. 
 
-      You should add Business Health Metrics "Call to Action" Links (CTA Links) in the Article using MarkDown to the Improved Article IF there is no CTA included within the Article provided.
+      You should add Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown IF there is no CTA included within the Article being reviewed.
 
-      IF Business Health Metric CTAs are not present in Article - add an embedded LINK CTA too the Improved Article using Markdown Syntax. BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+      IF Business Health Metric Embedded Markdown CTAs are not present in Article - add an embedded LINK CTA too the Improved Article using Markdown Syntax. 
+      BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
       
       Your Job is too ensure the Article is SEO Friendly.
 
@@ -481,6 +482,8 @@ async function articleReviewer(article) {
       Create a improved verison of the article based on your suggestions. 
             
       The Improved Article should follow this syntax: ${MD}.
+
+      The Improved Article should contain Embedded Call to Action Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
 
       This is the article to review: ${article}. 
 
