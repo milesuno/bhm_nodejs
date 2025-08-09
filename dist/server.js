@@ -249,9 +249,9 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   The articles should be informative and promotional for Business Health Metrics (BHM).
   
   WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded link - Business Health Metrics (BHM) services are: 
-    - Consultancy:  https://www.businesshealthmetrics.com/consultancy
-    - Implementation: https://www.businesshealthmetrics.com/implrmentation
-    - Implementation Retainer: https://www.businesshealthmetrics.com/retainer
+    - For Consultancy use URL:  https://www.businesshealthmetrics.com/consultancy
+    - For Implementation use URL: https://www.businesshealthmetrics.com/implrmentation
+    - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
 
    
   REQUIREMENTS:
