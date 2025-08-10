@@ -252,7 +252,9 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
     - For Consultancy use URL:  https://www.businesshealthmetrics.com/consultancy
     - For Implementation use URL: https://www.businesshealthmetrics.com/implrmentation
     - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
-
+    - For General Enquiries use URL: https://www.businesshealthmetrics.com/contact
+    - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
+    - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
    
   REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
@@ -491,9 +493,14 @@ async function articleReviewer(article) {
       The Improved Article should follow this syntax: ${MD}.
 
       The Improved Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: 
-      - Consultancy:  https://www.businesshealthmetrics.com/consultancy
-      - Implementation: https://www.businesshealthmetrics.com/implrmentation
-      - Implementation Retainer: https://www.businesshealthmetrics.com/retainer
+      - For Consultancy use URL:  https://www.businesshealthmetrics.com/consultancy
+      - For Implementation use URL: https://www.businesshealthmetrics.com/implementation
+      - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
+      - For General Enquiries use URL: https://www.businesshealthmetrics.com/contact
+      - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
+      - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
+
+
 
       This is the article to review: ${article}. 
 
