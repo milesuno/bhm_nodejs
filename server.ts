@@ -558,7 +558,8 @@ async function articleReviewer(article: any) {
       - For General Enquiries use URL: https://www.businesshealthmetrics.com/contact
       - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
-
+      
+      ENSURE that the Article Provided is using the correct URL for the CTA URL link
 
 
       This is the article to review: ${article}. 
