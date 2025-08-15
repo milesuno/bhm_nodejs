@@ -100,7 +100,16 @@ async function articlePlanner(topic, context) {
 
   Use the following data as context for your research when creating the article plan - add an index of references of the facts included in article plan: 
   ${context} 
-
+ 
+  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded link - Business Health Metrics (BHM) services are: 
+    - For Consultancy use URL:  https://www.businesshealthmetrics.com/consultancy
+    - For Implementation use URL: https://www.businesshealthmetrics.com/implrmentation
+    - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
+    - For General Enquiries use URL: https://www.businesshealthmetrics.com/contact
+    - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
+    - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
+  
+  
   OUTPUT Should in this format:
   Title
 
@@ -120,7 +129,7 @@ async function articlePlanner(topic, context) {
     try {
         console.log("RUN MODEL", "deepseek-r1:8b-llama-distill-q4_K_M ");
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "deepseek-r1:8b-llama-distill-q4_K_M",
+            model: "gpt-oss:latest",
             prompt,
             // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
@@ -264,14 +273,14 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   Prompt:
   ${reqPrompt || promptRef}
 
-  I also want you to add an approriate Title image description and main point image description for the article - the description should be detailed as it will be parsed to another model for image generation (descriptsion should not be included in article total length).
+  I also want you to add an approriate Title image description and main point image description for the article - the description should be very detailed as it will be parsed to another model for image generation. Avoid Using Charts in images. (description should not be included in article total length).
   
 
   The Article should use Markdown for syntax - here is a cheatsheet for Markdown:
   ${MD}
 
-  The Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
 
+  The Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
 
   Use examples if required for explaining complex topics.
 
@@ -284,8 +293,6 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   Introduction
   
   Article Body (with CTA)
-
-  Real Life Application
   
   Conclusion
 
