@@ -294,7 +294,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
     - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
     - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
    
-  REQUIREMENTS:
+ TASK REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
   Context:
   ${vectorSearchResults}
@@ -302,7 +302,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   Prompt:
   ${reqPrompt || promptRef}
 
-  I also want you to add an approriate Title image description and main point image description for the article - the description should be very detailed as it will be parsed to another model for image generation. Avoid Using Charts in images. (description should not be included in article total length).
+  I also want you to add an approriate "Title image description" and "Main Point image description" for the article - the description should be very detailed (describe the style, colors, focal point, etc.) as it will be parsed to another model for image generation. Only use single words in images - phrases and sentences will not generate correctly in images. (description should not be included in article total length).
   
 
   The Article should use Markdown for syntax - here is a cheatsheet for Markdown:
@@ -546,12 +546,14 @@ async function articleReviewer(article: any) {
 
       You should add Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown IF there is no CTA included within the Article being reviewed.
 
-      IF Business Health Metric Embedded Markdown CTAs are not present in Article - add an embedded LINK CTA too the Improved Article using Markdown Syntax. 
+      Ensure all references to company services has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com".
+      
+      IF Business Health Metric Embedded Markdown CTAs are not present in Article - add an embedded LINK with the correct BHM URL CTA too the Improved Article using Markdown Syntax. 
       BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
       
       Your Job is too ensure the Article is SEO Friendly.
 
-      REQUIREMENTS:
+      TASK REQUIREMENTS:
       Based on this prompt: ${promptRef} how well does this article cover the topic? Create a Number Rating it between 0-1. 
       
       Create a improved verison of the article based on your suggestions. 
