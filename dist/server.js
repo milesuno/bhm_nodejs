@@ -478,7 +478,7 @@ async function articleReviewer(article) {
     console.log({ promptRef2: promptRef, vectorSearchResults });
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "gemma3:12b-it-q4_K_M",
+            model: "deepseek-r1:8b-0528-qwen3-q4_K_M",
             prompt: `
       ROLE:
       You are an Expert Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
