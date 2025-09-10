@@ -719,17 +719,15 @@ cron.schedule(
 
       pendingReviewedArticle = {
         _id: new ObjectId(),
-        title:
-          ctaReview.includes("**Improved Article:**") &&
-          ctaReview.includes("**Title:**")
-            ? ctaReview
-                .split("**Improved Article:**")[1]
-                .split("**Title:**")[1]
-                .split("\n\n")[0]
-            : ctaReview.split("\n\n")[1],
-        content: ctaReview.split("\n\n").slice(3).join("\n\n"),
+        title: ctaReview.includes("**Title:**")
+          ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+          : ctaReview?.split("\n\n")[1],
+        content: ctaReview.includes("**Title:**")
+          ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+          : ctaReview?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
       };
+
       console.log(
         "[CRON] Running scheduled task at midnight 3",
         pendingArticle,
@@ -860,15 +858,19 @@ app.post(
       };
 
       let review = await articleReviewer(article);
+      let ctaReview = await articleCTAReviewer(review);
 
       pendingReviewedArticle = {
         _id: new ObjectId(),
-        title: review.includes("## Improved Article")
-          ? review.split("## Improved Article")[1].split("\n\n")[0]
-          : review.split("\n\n")[0],
-        content: review,
+        title: ctaReview.includes("**Title:**")
+          ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+          : ctaReview?.split("\n\n")[1],
+        content: ctaReview.includes("**Title:**")
+          ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+          : ctaReview?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
       };
+
       // factCheck = await articleFactChecker(review);
       //Delete?
 
@@ -893,15 +895,19 @@ app.post(
       };
 
       let review = await articleReviewer(article);
+      let ctaReview = await articleCTAReviewer(review);
 
       pendingReviewedArticle = {
         _id: new ObjectId(),
-        title: review.includes("## Improved Article")
-          ? review.split("## Improved Article")[1].split("\n\n")[0]
-          : review.split("\n\n")[0],
-        content: review,
+        title: ctaReview.includes("**Title:**")
+          ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+          : ctaReview?.split("\n\n")[1],
+        content: ctaReview.includes("**Title:**")
+          ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+          : ctaReview?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
       };
+
       // factCheck = await articleFactChecker(review);
       //Delete?
 
@@ -967,6 +973,8 @@ app.get(
 
     const article = await generateArticleWebMetrics();
     const review = await articleReviewer(article);
+    let ctaReview = await articleCTAReviewer(review);
+
     pendingArticle = {
       _id: new ObjectId(),
       title: article.includes("**Title:**")
@@ -980,10 +988,12 @@ app.get(
 
     pendingReviewedArticle = {
       _id: new ObjectId(),
-      title: review.includes("## Improved Article")
-        ? review.split("## Improved Article")[1].split("\n\n")[0]
-        : review.split("\n\n")[0],
-      content: review,
+      title: ctaReview.includes("**Title:**")
+        ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+        : ctaReview?.split("\n\n")[1],
+      content: ctaReview.includes("**Title:**")
+        ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+        : ctaReview?.split("\n\n").slice(1).join("\n\n"),
       creation: Date.now(),
     };
 

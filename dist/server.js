@@ -640,14 +640,12 @@ cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
         let ctaReview = await articleCTAReviewer(review);
         pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
-            title: ctaReview.includes("**Improved Article:**") &&
-                ctaReview.includes("**Title:**")
-                ? ctaReview
-                    .split("**Improved Article:**")[1]
-                    .split("**Title:**")[1]
-                    .split("\n\n")[0]
-                : ctaReview.split("\n\n")[1],
-            content: ctaReview.split("\n\n").slice(3).join("\n\n"),
+            title: ctaReview.includes("**Title:**")
+                ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+                : ctaReview?.split("\n\n")[1],
+            content: ctaReview.includes("**Title:**")
+                ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+                : ctaReview?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
         console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
@@ -748,12 +746,15 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
             creation: Date.now(),
         };
         let review = await articleReviewer(article);
+        let ctaReview = await articleCTAReviewer(review);
         pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
-            title: review.includes("## Improved Article")
-                ? review.split("## Improved Article")[1].split("\n\n")[0]
-                : review.split("\n\n")[0],
-            content: review,
+            title: ctaReview.includes("**Title:**")
+                ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+                : ctaReview?.split("\n\n")[1],
+            content: ctaReview.includes("**Title:**")
+                ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+                : ctaReview?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
         // factCheck = await articleFactChecker(review);
@@ -779,12 +780,15 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
             creation: Date.now(),
         };
         let review = await articleReviewer(article);
+        let ctaReview = await articleCTAReviewer(review);
         pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
-            title: review.includes("## Improved Article")
-                ? review.split("## Improved Article")[1].split("\n\n")[0]
-                : review.split("\n\n")[0],
-            content: review,
+            title: ctaReview.includes("**Title:**")
+                ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+                : ctaReview?.split("\n\n")[1],
+            content: ctaReview.includes("**Title:**")
+                ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+                : ctaReview?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
         // factCheck = await articleFactChecker(review);
@@ -836,6 +840,7 @@ app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
     pendingReviewedArticle = null;
     const article = await generateArticleWebMetrics();
     const review = await articleReviewer(article);
+    let ctaReview = await articleCTAReviewer(review);
     pendingArticle = {
         _id: new mongodb_1.ObjectId(),
         title: article.includes("**Title:**")
@@ -848,10 +853,12 @@ app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
     };
     pendingReviewedArticle = {
         _id: new mongodb_1.ObjectId(),
-        title: review.includes("## Improved Article")
-            ? review.split("## Improved Article")[1].split("\n\n")[0]
-            : review.split("\n\n")[0],
-        content: review,
+        title: ctaReview.includes("**Title:**")
+            ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+            : ctaReview?.split("\n\n")[1],
+        content: ctaReview.includes("**Title:**")
+            ? ctaReview?.split("\n\n").slice(1).join("\n\n")
+            : ctaReview?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
     };
     await sendApprovalEmail(pendingArticle);
