@@ -257,7 +257,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   
   The articles should be informative and promotional for Business Health Metrics (BHM).
   
-  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax- use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded link - Business Health Metrics (BHM) services are: 
+  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax - use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded "www.businesshealthmetrics.com" link - Business Health Metrics (BHM) services are: 
     - For Consultancy use URL:  https://www.businesshealthmetrics.com/consultancy
     - For Implementation use URL: https://www.businesshealthmetrics.com/implrmentation
     - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
@@ -292,19 +292,16 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 
   Introduction
   
-  Article Body (with CTA)
+  Article Body (with CORRECT CTA's "www.businesshealthmetrics.com"  and URL)
   
   Conclusion
 
-  EXCLUDE: All reference to "Chapter".
   EXCLUDE: All reference to Author, Publishing, Production  of text from Article Body.
-
-  REMOVE: Number from each point in Article Body.
 
 `;
         console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "gemma3:12b-it-q4_K_M",
+            model: "gemma3:27b-it-q4_K_M",
             prompt,
             // Makes sure that topic is not in previous articles created ${prevArticles}.,
             // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
@@ -501,20 +498,18 @@ async function articleReviewer(article) {
             
       The Improved Article should follow this syntax: ${MD}.
 
-      The Improved Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: 
-      - For Consultancy use URL:  https://www.businesshealthmetrics.com/consultancy
-      - For Implementation use URL: https://www.businesshealthmetrics.com/implementation
-      - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
-      - For General Enquiries use URL: https://www.businesshealthmetrics.com/contact
-      - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
-      - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
+      ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
+
+      The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
+      - Consultancy URL:  https://www.businesshealthmetrics.com/consultancy
+      - Implementation URL: https://www.businesshealthmetrics.com/implementation
+      - Implementation Retainer URL: https://www.businesshealthmetrics.com/retainer
+      - General Enquiries URL: https://www.businesshealthmetrics.com/contact
+      - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+      - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
-      ENSURE that the Article Provided is using the correct URL for the CTA URL link
 
-
-      This is the article to review: ${article}. 
-
-
+      This is the article to review: ${article}.
 
 
       Output should follow this format:
@@ -524,10 +519,6 @@ async function articleReviewer(article) {
       Suggestions
 
       Improved Article (with CTA's added)
-
-      Facts
-
-      Fact References
       `,
             stream: false,
         });
