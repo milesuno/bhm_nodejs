@@ -598,7 +598,6 @@ async function articleCTAReviewer(article: any) {
 
       ALL references to company services MUST has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK".
       
-      IF Business Health Metric Embedded Markdown CTAs are not present in Article - add an embedded LINK with the correct BHM URL CTA too the Improved Article using Markdown Syntax. 
       BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
   
 
@@ -614,13 +613,11 @@ async function articleCTAReviewer(article: any) {
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
 
-      This is the article to review - section to review "Improved Article (with CTA's added)": ${article}.
-
-      DO NOT CHANGE THE FORMAT OR CONTAIN OF ARTICLE - ONLY CTA URL's
+      This is the article to review: ${article}.
 
       Output should follow this format:
 
-      Improved Article (with Correct CTA URL's)
+      Article (with Correct CTA URL's)
 
       Output Language: ENGLISH
       `,
