@@ -334,7 +334,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 
     console.log("RUN MODEL", MODEL);
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "gemma3:27b-it-q4_K_M",
+      model: "gemma3:12b-it-q4_K_M",
       prompt,
       // Makes sure that topic is not in previous articles created ${prevArticles}.,
       // When discussing relevent topics: UX, Design referrer to venturesfoundry.com`,
@@ -534,7 +534,7 @@ async function articleReviewer(article: any) {
   let MD =
     'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
 
-  console.log({ promptRef2: promptRef, vectorSearchResults });
+  console.log("OLLAMA RESPONSE - REVIEW");
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
       model: "deepseek-r1:14b-qwen-distill-q4_K_M",
@@ -579,7 +579,7 @@ async function articleReviewer(article: any) {
       `,
       stream: false,
     });
-    // console.log("OLLAMA RESPONSE", { response });
+    console.log("OLLAMA RESPONSE - REVIEW", { response });
     return response.data.response.trim();
   } catch (error) {
     console.error("Error:", error);
@@ -588,10 +588,7 @@ async function articleReviewer(article: any) {
 }
 
 async function articleCTAReviewer(article: any) {
-  let MD =
-    'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
-
-  console.log({ promptRef2: promptRef, vectorSearchResults });
+  console.log("OLLAMA RESPONSE - CTA");
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
       model: "deepseek-r1:8b-qwen-distill-q4_K_M",
@@ -629,7 +626,7 @@ async function articleCTAReviewer(article: any) {
       `,
       stream: false,
     });
-    // console.log("OLLAMA RESPONSE", { response });
+    console.log("OLLAMA RESPONSE - CTA", { response });
     return response.data.response.trim();
   } catch (error) {
     console.error("Error:", error);
@@ -731,6 +728,7 @@ cron.schedule(
       console.log(
         "[CRON] Running scheduled task at midnight 3",
         pendingArticle,
+        pendingReviewedArticle,
         content
       );
 
@@ -871,15 +869,10 @@ app.post(
         creation: Date.now(),
       };
 
-      // factCheck = await articleFactChecker(review);
-      //Delete?
-
       console.log({ review, article });
       await sendApprovalEmail(pendingArticle);
       // const article = await generateArticleWebMetrics();
-      res
-        .status(200)
-        .send({ pendingArticle, facts: pendingArticle.facts, review });
+      res.status(200).send({ pendingArticle, review });
     } else {
       const article = await generateArticleWebMetrics(topic);
       promptRef = topic;
