@@ -556,13 +556,13 @@ async function articleReviewer(article: any) {
       ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
 
       The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
-      - Consultancy URL:  https://www.businesshealthmetrics.com/consultancy
-      - Implementation URL: https://www.businesshealthmetrics.com/implementation
-      - Implementation Retainer URL: https://www.businesshealthmetrics.com/retainer
+      - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
+      - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
+      - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
-      
+          
 
       This is the article to review: ${article}.
 
@@ -605,9 +605,9 @@ async function articleCTAReviewer(article: any) {
       ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
 
       The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
-      - Consultancy URL:  https://www.businesshealthmetrics.com/consultancy
-      - Implementation URL: https://www.businesshealthmetrics.com/implementation
-      - Implementation Retainer URL: https://www.businesshealthmetrics.com/retainer
+      - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
+      - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
+      - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
