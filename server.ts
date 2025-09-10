@@ -711,15 +711,15 @@ cron.schedule(
         creation: Date.now(),
       };
 
-      let review = await articleReviewer(content);
-      let ctaReview = await articleCTAReviewer(review);
+      let ctaReview = await articleCTAReviewer(content);
+      let review = await articleReviewer(ctaReview);
 
       pendingReviewedArticle = {
         _id: new ObjectId(),
-        title: ctaReview.includes("**Title:**")
-          ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+        title: review.includes("**Title:**")
+          ? review.split("**Title:**")[1].split("\n\n")[0]
           : ctaReview?.split("\n\n")[1],
-        content: ctaReview.includes("**Title:**")
+        content: review.includes("**Title:**")
           ? ctaReview?.split("\n\n").slice(1).join("\n\n")
           : ctaReview?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
@@ -855,15 +855,15 @@ app.post(
         creation: Date.now(),
       };
 
-      let review = await articleReviewer(article);
-      let ctaReview = await articleCTAReviewer(review);
+      let ctaReview = await articleCTAReviewer(article);
+      let review = await articleReviewer(ctaReview);
 
       pendingReviewedArticle = {
         _id: new ObjectId(),
-        title: ctaReview.includes("**Title:**")
-          ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+        title: review.includes("**Title:**")
+          ? review.split("**Title:**")[1].split("\n\n")[0]
           : ctaReview?.split("\n\n")[1],
-        content: ctaReview.includes("**Title:**")
+        content: review.includes("**Title:**")
           ? ctaReview?.split("\n\n").slice(1).join("\n\n")
           : ctaReview?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
@@ -887,15 +887,15 @@ app.post(
         creation: Date.now(),
       };
 
-      let review = await articleReviewer(article);
-      let ctaReview = await articleCTAReviewer(review);
+      let ctaReview = await articleCTAReviewer(article);
+      let review = await articleReviewer(ctaReview);
 
       pendingReviewedArticle = {
         _id: new ObjectId(),
-        title: ctaReview.includes("**Title:**")
-          ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+        title: review.includes("**Title:**")
+          ? review.split("**Title:**")[1].split("\n\n")[0]
           : ctaReview?.split("\n\n")[1],
-        content: ctaReview.includes("**Title:**")
+        content: review.includes("**Title:**")
           ? ctaReview?.split("\n\n").slice(1).join("\n\n")
           : ctaReview?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
@@ -965,8 +965,8 @@ app.get(
     pendingReviewedArticle = null;
 
     const article = await generateArticleWebMetrics();
-    const review = await articleReviewer(article);
-    let ctaReview = await articleCTAReviewer(review);
+    let ctaReview = await articleCTAReviewer(article);
+    const review = await articleReviewer(ctaReview);
 
     pendingArticle = {
       _id: new ObjectId(),
@@ -981,10 +981,10 @@ app.get(
 
     pendingReviewedArticle = {
       _id: new ObjectId(),
-      title: ctaReview.includes("**Title:**")
-        ? ctaReview.split("**Title:**")[1].split("\n\n")[0]
+      title: review.includes("**Title:**")
+        ? review.split("**Title:**")[1].split("\n\n")[0]
         : ctaReview?.split("\n\n")[1],
-      content: ctaReview.includes("**Title:**")
+      content: review.includes("**Title:**")
         ? ctaReview?.split("\n\n").slice(1).join("\n\n")
         : ctaReview?.split("\n\n").slice(1).join("\n\n"),
       creation: Date.now(),
