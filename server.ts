@@ -715,10 +715,10 @@ cron.schedule(
         _id: new ObjectId(),
         title: review.includes("**Title:**")
           ? review.split("**Title:**")[1].split("\n\n")[0]
-          : ctaReview?.split("\n\n")[1],
+          : review.split("\n\n")[1],
         content: review.includes("**Title:**")
-          ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-          : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+          ? review.split("\n\n").slice(1).join("\n\n")
+          : review.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
       };
 
@@ -859,10 +859,10 @@ app.post(
         _id: new ObjectId(),
         title: review.includes("**Title:**")
           ? review.split("**Title:**")[1].split("\n\n")[0]
-          : ctaReview?.split("\n\n")[1],
+          : review.split("\n\n")[1],
         content: review.includes("**Title:**")
-          ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-          : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+          ? review.split("\n\n").slice(1).join("\n\n")
+          : review.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
       };
 
@@ -891,10 +891,10 @@ app.post(
         _id: new ObjectId(),
         title: review.includes("**Title:**")
           ? review.split("**Title:**")[1].split("\n\n")[0]
-          : ctaReview?.split("\n\n")[1],
+          : review.split("\n\n")[1],
         content: review.includes("**Title:**")
-          ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-          : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+          ? review.split("\n\n").slice(1).join("\n\n")
+          : review.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
       };
 
@@ -980,10 +980,10 @@ app.get(
       _id: new ObjectId(),
       title: review.includes("**Title:**")
         ? review.split("**Title:**")[1].split("\n\n")[0]
-        : ctaReview?.split("\n\n")[1],
+        : review.split("\n\n")[1],
       content: review.includes("**Title:**")
-        ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-        : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+        ? review.split("\n\n").slice(1).join("\n\n")
+        : review.split("\n\n").slice(1).join("\n\n"),
       creation: Date.now(),
     };
 

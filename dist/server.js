@@ -638,10 +638,10 @@ cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
             _id: new mongodb_1.ObjectId(),
             title: review.includes("**Title:**")
                 ? review.split("**Title:**")[1].split("\n\n")[0]
-                : ctaReview?.split("\n\n")[1],
+                : review.split("\n\n")[1],
             content: review.includes("**Title:**")
-                ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-                : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+                ? review.split("\n\n").slice(1).join("\n\n")
+                : review.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
         console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, pendingReviewedArticle, content);
@@ -747,10 +747,10 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
             _id: new mongodb_1.ObjectId(),
             title: review.includes("**Title:**")
                 ? review.split("**Title:**")[1].split("\n\n")[0]
-                : ctaReview?.split("\n\n")[1],
+                : review.split("\n\n")[1],
             content: review.includes("**Title:**")
-                ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-                : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+                ? review.split("\n\n").slice(1).join("\n\n")
+                : review.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
         console.log({ review, article });
@@ -777,10 +777,10 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
             _id: new mongodb_1.ObjectId(),
             title: review.includes("**Title:**")
                 ? review.split("**Title:**")[1].split("\n\n")[0]
-                : ctaReview?.split("\n\n")[1],
+                : review.split("\n\n")[1],
             content: review.includes("**Title:**")
-                ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-                : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+                ? review.split("\n\n").slice(1).join("\n\n")
+                : review.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
         // factCheck = await articleFactChecker(review);
@@ -847,10 +847,10 @@ app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
         _id: new mongodb_1.ObjectId(),
         title: review.includes("**Title:**")
             ? review.split("**Title:**")[1].split("\n\n")[0]
-            : ctaReview?.split("\n\n")[1],
+            : review.split("\n\n")[1],
         content: review.includes("**Title:**")
-            ? ctaReview?.split("\n\n").slice(1).join("\n\n")
-            : ctaReview?.split("\n\n").slice(1).join("\n\n"),
+            ? review.split("\n\n").slice(1).join("\n\n")
+            : review.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
     };
     await sendApprovalEmail(pendingArticle);
