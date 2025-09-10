@@ -298,6 +298,9 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 
   EXCLUDE: All reference to Author, Publishing, Production  of text from Article Body.
 
+  Output Language: ENGLISH
+
+
 `;
         console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
@@ -482,13 +485,6 @@ async function articleReviewer(article) {
 
       Your job is too ensure the article provide is high quality and informative. 
 
-      You should add Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown IF there is no CTA included within the Article being reviewed.
-
-      Ensure all references to company services has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com".
-      
-      IF Business Health Metric Embedded Markdown CTAs are not present in Article - add an embedded LINK with the correct BHM URL CTA too the Improved Article using Markdown Syntax. 
-      BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
-      
       Your Job is too ensure the Article is SEO Friendly.
 
       TASK REQUIREMENTS:
@@ -519,6 +515,56 @@ async function articleReviewer(article) {
       Suggestions
 
       Improved Article (with CTA's added)
+
+      Output Language: ENGLISH
+      `,
+            stream: false,
+        });
+        // console.log("OLLAMA RESPONSE", { response });
+        return response.data.response.trim();
+    }
+    catch (error) {
+        console.error("Error:", error);
+        return "An error occurred while reviewing.";
+    }
+}
+async function articleCTAReviewer(article) {
+    let MD = 'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
+    console.log({ promptRef2: promptRef, vectorSearchResults });
+    try {
+        const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
+            model: "deepseek-r1:8b-qwen-distill-q4_K_M",
+            prompt: `
+      ROLE:
+      You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
+
+      ALL references to company services MUST has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK".
+      
+      IF Business Health Metric Embedded Markdown CTAs are not present in Article - add an embedded LINK with the correct BHM URL CTA too the Improved Article using Markdown Syntax. 
+      BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+  
+
+      TASK REQUIREMENTS:
+      ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
+
+      The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
+      - Consultancy URL:  https://www.businesshealthmetrics.com/consultancy
+      - Implementation URL: https://www.businesshealthmetrics.com/implementation
+      - Implementation Retainer URL: https://www.businesshealthmetrics.com/retainer
+      - General Enquiries URL: https://www.businesshealthmetrics.com/contact
+      - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+      - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+      
+
+      This is the article to review - section to review "Improved Article (with CTA's added)": ${article}.
+
+      DO NOT CHANGE THE FORMAT OR CONTAIN OF ARTICLE - ONLY CTA URL's
+
+      Output should follow this format:
+
+      Improved Article (with Correct CTA URL's)
+
+      Output Language: ENGLISH
       `,
             stream: false,
         });
@@ -591,16 +637,17 @@ cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
             creation: Date.now(),
         };
         let review = await articleReviewer(content);
+        let ctaReview = await articleCTAReviewer(review);
         pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
-            title: review.includes("**Improved Article:**") &&
-                review.includes("**Title:**")
-                ? review
+            title: ctaReview.includes("**Improved Article:**") &&
+                ctaReview.includes("**Title:**")
+                ? ctaReview
                     .split("**Improved Article:**")[1]
                     .split("**Title:**")[1]
                     .split("\n\n")[0]
-                : review.split("\n\n")[1],
-            content: review.split("\n\n").slice(3).join("\n\n"),
+                : ctaReview.split("\n\n")[1],
+            content: ctaReview.split("\n\n").slice(3).join("\n\n"),
             creation: Date.now(),
         };
         console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, content);
