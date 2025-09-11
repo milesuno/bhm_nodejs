@@ -537,7 +537,7 @@ async function articleCTAReviewer(article) {
       ROLE:
       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
 
-      ALL references to company services MUST has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK".
+      ALL references to company services MUST has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#".
       
       BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
   
