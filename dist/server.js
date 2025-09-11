@@ -505,7 +505,7 @@ async function articleReviewer(article) {
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
           
 
-      This is the article to review: ${article}.
+      This is the article to review - SECTION TO REVIEW "Article (with Correct CTA URL's)": ${article}.
 
 
       Output should follow this format:
