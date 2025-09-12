@@ -537,7 +537,7 @@ async function articleReviewer(article: any) {
   console.log("OLLAMA RESPONSE - REVIEW");
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "deepseek-r1:14b-qwen-distill-q4_K_M",
+      model: "gemma3:12b-it-q4_K_M",
       prompt: `
       ROLE:
       You are an Expert Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
@@ -603,6 +603,8 @@ async function articleCTAReviewer(article: any) {
 
       TASK REQUIREMENTS:
       ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
+
+      THE FOLLOWING ARE THE ONLY SERVICES Business Health Metrics (BHM) OFFER. DO NOT USE ANY OTHER URL's. 
 
       The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
       - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
