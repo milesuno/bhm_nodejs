@@ -558,6 +558,9 @@ async function articleCTAReviewer(article) {
 
       This is the article to review: ${article}.
 
+      DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary. 
+      
+      
       Output should follow this format:
 
       Article (with Correct CTA URL's)
