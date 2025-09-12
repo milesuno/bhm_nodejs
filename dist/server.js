@@ -532,7 +532,7 @@ async function articleCTAReviewer(article) {
     console.log("OLLAMA RESPONSE - CTA");
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "deepseek-r1:14b-qwen-distill-q4_K_M",
+            model: "phi3:3.8b-mini-128k-instruct-q4_K_S",
             prompt: `
       ROLE:
       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
@@ -561,8 +561,6 @@ async function articleCTAReviewer(article) {
       Output should follow this format:
 
       Article (with Correct CTA URL's)
-
-      Output Language: ENGLISH
       `,
             stream: false,
         });
