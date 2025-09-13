@@ -253,20 +253,8 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   ROLE:
   You are a Writer for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. Your job is create helpful and insightful articles.  
   
-  You should add Business Health Metrics "Call to Action" Links (CTA Links) in the Article using MarkDown. 
+  The articles should be informative and promotional for Business Health Metrics (BHM).  
   
-  The articles should be informative and promotional for Business Health Metrics (BHM).
-  
-  The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
-  - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
-  - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
-  - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
-  - General Enquiries URL: https://www.businesshealthmetrics.com/contact
-  - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
-  - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
-
-  USE EXACT URL's AND EXACT URL PATH's - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
-
    
  TASK REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
@@ -276,24 +264,36 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   Prompt:
   ${reqPrompt || promptRef}
 
-  I also want you to add an approriate "Title image description" and "Main Point image description" for the article - the description should be very detailed (describe the style, colors, focal point, etc.) as it will be parsed to another model for image generation. Only use single words in images - phrases and sentences will not generate correctly in images. (description should not be included in article total length).
+  I also want you to add an approriate "Title image description" and "Main Point image description" for the article - the description should be very detailed (describe the style, colors, etc.) as it will be parsed to another model for image generation. Only use single words in images - phrases and sentences will not generate correctly in images.
   
 
   The Article should use Markdown for syntax - here is a cheatsheet for Markdown:
   ${MD}
 
 
-  The Article should contain Markdown Embedded "Call to Action"  with Links for Business Health Metrics (BHM) services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+ The Article should contain Markdown Embedded "Call to Actions" (CTA) URL's Links "www.businesshealthmetrics.com" - for Business Health Metrics (BHM) services: 
+  - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
+  - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
+  - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
+  - General Enquiries URL: https://www.businesshealthmetrics.com/contact
+  - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+  - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+
+  USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENT - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
   Use examples if required for explaining complex topics.
 
-  Keep the length to a 10 mins read.
+  Keep the length to a 10 mins read (image descriptions should not be included in article total length).
 
 
   EXPECTED OUTPUT:
+  Title image description
+  
   Title
-
+  
   Introduction
+  
+  Main Point image description
   
   Article Body (with CORRECT CTA's "www.businesshealthmetrics.com"  and URL)
   
@@ -503,7 +503,7 @@ async function articleReviewer(article) {
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
           
-      USE EXACT URL's AND EXACT URL PATH's - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENT - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
 
       This is the article to review - SECTION TO REVIEW "Article (with Correct CTA URL's)": ${article}.
@@ -555,7 +555,7 @@ async function articleCTAReviewer(article) {
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
-      USE EXACT URL's AND EXACT URL PATH's - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENT - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
       This is the article to review: ${article}.
 
