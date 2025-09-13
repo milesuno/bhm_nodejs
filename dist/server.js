@@ -279,7 +279,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
   - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
 
-  USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENT - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+  USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
   Use examples if required for explaining complex topics.
 
@@ -503,7 +503,7 @@ async function articleReviewer(article) {
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
           
-      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENT - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
 
       This is the article to review - SECTION TO REVIEW "Article (with Correct CTA URL's)": ${article}.
@@ -555,9 +555,11 @@ async function articleCTAReviewer(article) {
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
-      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENT - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
       This is the article to review: ${article}.
+
+      DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary. 
       
       
       Output should follow this format:
