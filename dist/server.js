@@ -257,13 +257,16 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   
   The articles should be informative and promotional for Business Health Metrics (BHM).
   
-  WHEN topics are complex add a embedded LINK Call to Action (CTA) for www.BusinessHealthMetrics.com using Markdown Syntax - use the APPROPRIATE BHM Web Analytics service related to the topic of the embedded "www.businesshealthmetrics.com" link - Business Health Metrics (BHM) services are: 
-    - For Consultancy use URL:  https://www.businesshealthmetrics.com/consultancy
-    - For Implementation use URL: https://www.businesshealthmetrics.com/implrmentation
-    - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
-    - For General Enquiries use URL: https://www.businesshealthmetrics.com/contact
-    - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
-    - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
+  The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
+  - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
+  - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
+  - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
+  - General Enquiries URL: https://www.businesshealthmetrics.com/contact
+  - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+  - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+
+  USE EXACT URL's AND EXACT URL PATH's - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+
    
  TASK REQUIREMENTS:
   Create a well-structured, engaging, and informative article using this context and prompt. 
@@ -504,6 +507,8 @@ async function articleReviewer(article) {
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
           
+      USE EXACT URL's AND EXACT URL PATH's - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+
 
       This is the article to review - SECTION TO REVIEW "Article (with Correct CTA URL's)": ${article}.
 
@@ -538,8 +543,9 @@ async function articleCTAReviewer(article) {
       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
 
       ALL references to company services MUST has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#".
-      
-      BHM services: Consultancy, Implementation, Implementation Retainer - URLS to Embed: https://www.businesshealthmetrics.com.
+     
+      ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/"
+     
   
 
       TASK REQUIREMENTS:
@@ -555,6 +561,7 @@ async function articleCTAReviewer(article) {
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
+      USE EXACT URL's AND EXACT URL PATH's - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
       This is the article to review: ${article}.
 
