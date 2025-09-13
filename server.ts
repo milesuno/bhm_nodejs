@@ -617,8 +617,6 @@ async function articleCTAReviewer(article: any) {
       USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENT - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
 
       This is the article to review: ${article}.
-
-      DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary. 
       
       
       Output should follow this format:
