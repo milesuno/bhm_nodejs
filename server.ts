@@ -306,9 +306,9 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
   - General Enquiries URL: https://www.businesshealthmetrics.com/contact
   - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
-  - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+  - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
 
-  USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+  USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
 
   Use examples if required for explaining complex topics.
 
@@ -324,7 +324,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   
   Main Point image description
   
-  Article Body (with CORRECT CTA's "www.businesshealthmetrics.com"  and URL)
+  Article Body (with CORRECT CTA's "www.businesshealthmetrics.com"  and CTA URL)
   
   Conclusion
 
@@ -560,9 +560,9 @@ async function articleReviewer(article: any) {
       - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
-      - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+      - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
           
-      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
 
 
       This is the article to review - SECTION TO REVIEW "Article (with Correct CTA URL's)": ${article}.
@@ -595,16 +595,22 @@ async function articleCTAReviewer(article: any) {
       ROLE:
       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
 
-      ALL references to company services MUST has an CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#".
+      ALL references to BHM company services MUST has an Business Health Metric CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com".
+      
+      THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#", ETC.
      
-      ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com" - THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/"
+      ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com".
+      
+      CTA's URL's THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/", "https://www.businessdataconsultants.com" - ONLY USE: "https://www.businesshealthmetrics.com" 
      
   
 
       TASK REQUIREMENTS:
       ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
 
-      THE FOLLOWING ARE THE ONLY SERVICES Business Health Metrics (BHM) OFFER. DO NOT USE ANY OTHER URL's. 
+      THE FOLLOWING ARE THE ONLY SERVICES Business Health Metrics (BHM) OFFER. 
+      
+      DO NOT USE ANY OTHER URL's OR ANY SERVICES are that not listed below. 
 
       The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
       - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
@@ -612,11 +618,13 @@ async function articleCTAReviewer(article: any) {
       - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
       - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
-      - FREE Data Layer Scanner Anlaytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+      - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
-      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - DO NOT USE: "https://www.businesshealthmetrics.com/consultation", "https://www.businesshealthmetrics.com/contact-us", "https://www.businessinsightsolutions.com/data-engineering-services".
+      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
 
       This is the article to review: ${article}.
+
+      DO NOT Alter Image Descriptions - ONLY change CTA URL's if neccassary. 
 
       DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary. 
       
