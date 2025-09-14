@@ -106,8 +106,8 @@ async function articlePlanner(topic, context) {
     - For Implementation use URL: https://www.businesshealthmetrics.com/implrmentation
     - For Implementation Retainer use URL: https://www.businesshealthmetrics.com/retainer
     - For General Enquiries use URL: https://www.businesshealthmetrics.com/contact
-    - FREE Web Anlaytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
-    - FREE Data Layer Scanner Anlaytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
+    - FREE Web Analytics Tool Scanner use URL: https://www.businesshealthmetrics.com/free-website-audit
+    - FREE Data Layer Scanner Analytics use URL: https://www.businesshealthmetrics.com/datalayer-scanner
   
   
   OUTPUT Should in this format:
@@ -257,7 +257,11 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   
    
  TASK REQUIREMENTS:
-  Create a well-structured, engaging, and informative article using this context and prompt. 
+
+  Create a Article Plan first and use that to structure the Article.
+ 
+  Create a well-structured, engaging, and informative article (SEO Friendly) using this context and prompt. 
+
   Context:
   ${vectorSearchResults}
 
@@ -276,7 +280,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
   - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
   - General Enquiries URL: https://www.businesshealthmetrics.com/contact
-  - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+  - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
   - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
 
   USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
@@ -287,6 +291,8 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
 
 
   EXPECTED OUTPUT:
+  Article Plan
+  
   Title image description
   
   Title
@@ -486,6 +492,9 @@ async function articleReviewer(article) {
 
       Your Job is too ensure the Article is SEO Friendly.
 
+      I also want you to add an approriate "Title image description" and "Main Point image description" for the article - the description should be very detailed (describe the style, colors, etc.) as it will be parsed to another model for image generation. Only use single words in images - phrases and sentences will not generate correctly in images.
+
+
       TASK REQUIREMENTS:
       Based on this prompt: ${promptRef} how well does this article cover the topic? Create a Number Rating it between 0-1. 
       
@@ -500,7 +509,7 @@ async function articleReviewer(article) {
       - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
       - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
-      - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+      - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
           
       USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
@@ -515,7 +524,21 @@ async function articleReviewer(article) {
 
       Suggestions
 
-      Improved Article (with CTA's added)
+      Improved Article (with CTA's added):
+      Title image description
+      
+      Title
+      
+      Introduction
+      
+      Main Point image description
+      
+      Article Body (with CORRECT CTA's "www.businesshealthmetrics.com" and CTA URL)
+      
+      Conclusion
+
+      EXCLUDE: All reference to Author, Publishing, Production  of text from Article Body.
+      DO NOT NUMBER LIST Article Titles
       `,
             stream: false,
         });
@@ -558,7 +581,7 @@ async function articleCTAReviewer(article) {
       - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
       - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
-      - FREE Web Anlaytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+      - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
       USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
