@@ -973,7 +973,7 @@ app.get(
     if (pendingArticle._id == req.params.id)
       await new Article({
         title: pendingArticle?.title,
-        content: pendingReviewedArticle?.content,
+        content: pendingArticle?.content,
       }).save();
 
     if (pendingReviewedArticle._id == req.params.id)
