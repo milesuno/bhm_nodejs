@@ -304,6 +304,8 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   Conclusion
 
   EXCLUDE: All reference to Author, Publishing, Production  of text from Article Body.
+  
+  DO NOT NUMBER LIST Article Titles
 `;
         console.log("RUN MODEL", MODEL);
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
