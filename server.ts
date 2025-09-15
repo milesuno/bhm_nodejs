@@ -333,7 +333,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   Conclusion
 
   EXCLUDE: All reference to Author, Publishing, Production  of text from Article Body.
-  
+
   DO NOT NUMBER LIST Article Titles
 `;
 
@@ -739,7 +739,7 @@ cron.schedule(
         _id: new ObjectId(),
         title: content.includes("**Title:**")
           ? content.split("**Title:**")[1].split("\n\n")[0]
-          : content?.split("\n\n")[1],
+          : content?.split("\n\n")[2],
         content: content.includes("**Title:**")
           ? content?.split("\n\n").slice(1).join("\n\n")
           : content?.split("\n\n").slice(1).join("\n\n"),
@@ -753,7 +753,7 @@ cron.schedule(
         _id: new ObjectId(),
         title: review.includes("**Title:**")
           ? review.split("**Title:**")[1].split("\n\n")[0]
-          : review.split("\n\n")[1],
+          : review.split("\n\n")[2],
         content: review.includes("**Title:**")
           ? review.split("\n\n").slice(1).join("\n\n")
           : review.split("\n\n").slice(1).join("\n\n"),
@@ -883,7 +883,7 @@ app.post(
         _id: new ObjectId(),
         title: article.includes("**Title:**")
           ? article.split("**Title:**")[1].split("\n\n")[0]
-          : article?.split("\n\n")[1],
+          : article?.split("\n\n")[2],
         content: article.includes("**Title:**")
           ? article?.split("\n\n").slice(1).join("\n\n")
           : article?.split("\n\n").slice(1).join("\n\n"),
@@ -897,7 +897,7 @@ app.post(
         _id: new ObjectId(),
         title: review.includes("**Title:**")
           ? review.split("**Title:**")[1].split("\n\n")[0]
-          : review.split("\n\n")[1],
+          : review.split("\n\n")[2],
         content: review.includes("**Title:**")
           ? review.split("\n\n").slice(1).join("\n\n")
           : review.split("\n\n").slice(1).join("\n\n"),
