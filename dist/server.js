@@ -257,8 +257,6 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   
    
  TASK REQUIREMENTS:
-
-  Create a Article Plan first and use that to structure the Article.
  
   Create a well-structured, engaging, and informative article (SEO Friendly) using this context and prompt. 
 
@@ -268,7 +266,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   Prompt:
   ${reqPrompt || promptRef}
 
-  I also want you to add an approriate "Title image description" and "Main Point image description" for the article - the description should be very detailed (describe the style, colors, etc.) as it will be parsed to another model for image generation. Only use single words in images - phrases and sentences will not generate correctly in images.
+  I also want you to add a "Title image description" and "Main Point image description" for the article based on the Article OR Article Topic - the description should be very detailed (describe the style, colors, composition etc.) as it will be parsed to another model for image generation. Only use single words in images - all words should be wrapped in "".
   
 
   The Article should use Markdown for syntax - here is a cheatsheet for Markdown:
@@ -283,16 +281,16 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
   - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
 
-  USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
+  USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLES:
+  URL Path: "https://www.businesshealthmetrics.com/services"
+  URL Path and Fragment: "https://www.businesshealthmetrics.com/services#consultancy", "https://www.businesshealthmetrics.com/services#retainer", "https://www.businesshealthmetrics.com/services#implementation"
 
   Use examples if required for explaining complex topics.
 
   Keep the length to a 10 mins read (image descriptions should not be included in article total length).
 
 
-  EXPECTED OUTPUT:
-  Article Plan
-  
+  EXPECTED OUTPUT:  
   Title image description
   
   Title
@@ -566,7 +564,6 @@ async function articleCTAReviewer(article) {
       ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com".
       
       CTA's URL's THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/", "https://www.businessdataconsultants.com" - ONLY USE: "https://www.businesshealthmetrics.com" 
-     
   
 
       TASK REQUIREMENTS:
@@ -584,7 +581,9 @@ async function articleCTAReviewer(article) {
       - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
       - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
       
-      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLE: "https://www.businesshealthmetrics.com/services#consultancy".
+      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLES:
+      URL Path: "https://www.businesshealthmetrics.com/services"
+      URL Path and Fragment: "https://www.businesshealthmetrics.com/services#consultancy", "https://www.businesshealthmetrics.com/services#retainer", "https://www.businesshealthmetrics.com/services#implementation"
 
       This is the article to review: ${article}.
 
@@ -594,7 +593,9 @@ async function articleCTAReviewer(article) {
       
       
       Output should follow this format:
-
+      
+      Review Details
+      
       Article (with Correct CTA URL's)
       `,
             stream: false,
@@ -667,8 +668,8 @@ cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
                 : content?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
-        let ctaReview = await articleCTAReviewer(content);
-        let review = await articleReviewer(ctaReview);
+        let review = await articleCTAReviewer(content);
+        // let review = await articleReviewer(ctaReview);
         pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
             title: review.includes("**Title:**")
@@ -776,8 +777,8 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
                 : article?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
-        let ctaReview = await articleCTAReviewer(article);
-        let review = await articleReviewer(ctaReview);
+        let review = await articleCTAReviewer(article);
+        // let review = await articleReviewer(ctaReview);
         pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
             title: review.includes("**Title:**")
@@ -806,8 +807,8 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
                 : article?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
-        let ctaReview = await articleCTAReviewer(article);
-        let review = await articleReviewer(ctaReview);
+        let review = await articleCTAReviewer(article);
+        // let review = await articleReviewer(ctaReview);
         pendingReviewedArticle = {
             _id: new mongodb_1.ObjectId(),
             title: review.includes("**Title:**")
@@ -866,8 +867,8 @@ app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
     pendingArticle = null;
     pendingReviewedArticle = null;
     const article = await generateArticleWebMetrics();
-    let ctaReview = await articleCTAReviewer(article);
-    const review = await articleReviewer(ctaReview);
+    let review = await articleCTAReviewer(article);
+    // const review = await articleReviewer(ctaReview);
     pendingArticle = {
         _id: new mongodb_1.ObjectId(),
         title: article.includes("**Title:**")
