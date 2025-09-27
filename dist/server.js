@@ -23,17 +23,17 @@ const Article = require("./models/article");
 const WebDoc = require("./models/doc-ref");
 const WebPDFDoc = require("./models/doc-pdf");
 app.use(express.json());
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Expose-Headers", "x-auth-token");
-    next();
-});
 app.use((0, cors_1.default)({
-    origin: "*", // Change to your frontend domain
+    origin: "https://www.businesshealthmetrics.com", // Change to your frontend domain
     credentials: true,
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
 }));
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://www.businesshealthmetrics.com");
+    res.header("Access-Control-Expose-Headers", "x-auth-token");
+    next();
+});
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434/api/generate";
 const MODEL = process.env.MODEL || "gemma:2b"; // Change to a model you prefer
 console.log({ env: process.env.OLLAMA_URL, OLLAMA_URL, MODEL });

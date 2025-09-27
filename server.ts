@@ -22,20 +22,20 @@ const WebPDFDoc = require("./models/doc-pdf");
 
 app.use(express.json());
 
-app.use((req: any, res: any, next: any) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Expose-Headers", "x-auth-token");
-  next();
-});
-
 app.use(
   cors({
-    origin: "*", // Change to your frontend domain
+    origin: "https://www.businesshealthmetrics.com", // Change to your frontend domain
     credentials: true,
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
   })
 );
+
+app.use((req: any, res: any, next: any) => {
+  res.header("Access-Control-Allow-Origin", "http://www.businesshealthmetrics.com");
+  res.header("Access-Control-Expose-Headers", "x-auth-token");
+  next();
+});
 
 const OLLAMA_URL =
   process.env.OLLAMA_URL || "http://127.0.0.1:11434/api/generate";
