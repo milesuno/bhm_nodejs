@@ -32,7 +32,7 @@ app.use(
 );
 
 app.use((req: any, res: any, next: any) => {
-  res.header("Access-Control-Allow-Origin", "http://www.businesshealthmetrics.com");
+  res.header("Access-Control-Allow-Origin", "https://www.businesshealthmetrics.com");
   res.header("Access-Control-Expose-Headers", "x-auth-token");
   next();
 });

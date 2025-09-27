@@ -30,7 +30,7 @@ app.use((0, cors_1.default)({
     allowedHeaders: "Content-Type, Authorization",
 }));
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://www.businesshealthmetrics.com");
+    res.header("Access-Control-Allow-Origin", "https://www.businesshealthmetrics.com");
     res.header("Access-Control-Expose-Headers", "x-auth-token");
     next();
 });
