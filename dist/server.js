@@ -642,7 +642,10 @@ async function articleFactChecker(article) {
 }
 // BOTS
 async function crawlWebsite(url) {
-    const browser = await puppeteer.launch({ headless: "new" });
+    // const browser = await puppeteer.launch({ headless: "new" });
+    const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser'
+    });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle2" });
     const title = await page.title();
