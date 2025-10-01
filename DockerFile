@@ -1,6 +1,9 @@
 # Use the official Node.js image
 FROM node:18
 
+# OR: explicitly install Chrome for Puppeteer
+RUN npx puppeteer browsers install chrome
+
 # Set the working directory
 WORKDIR /dist
 
