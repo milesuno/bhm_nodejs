@@ -16,6 +16,7 @@ ollama_container:
     - "11434:11434"
   volumes:
     - ollama-data:/root/.ollama
+    - puppeteer-cache:/root/.cache/puppeteer
   healthcheck:
     test: ["CMD", "curl", "-f", "http://localhost:11434"]
     interval: 10s
