@@ -32,7 +32,10 @@ app.use(
 );
 
 app.use((req: any, res: any, next: any) => {
-  res.header("Access-Control-Allow-Origin", "https://www.businesshealthmetrics.com");
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://www.businesshealthmetrics.com"
+  );
   res.header("Access-Control-Expose-Headers", "x-auth-token");
   next();
 });
@@ -705,8 +708,10 @@ async function articleFactChecker(article: any) {
 async function crawlWebsite(url: any) {
   // const browser = await puppeteer.launch({ headless: "new" });
   const browser = await puppeteer.launch({
-  executablePath: '/usr/bin/chromium-browser'
-});
+    headless: "new",
+    executablePath: "/usr/bin/chromium-browser",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle2" });
 
