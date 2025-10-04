@@ -709,7 +709,8 @@ async function crawlWebsite(url: any) {
   // const browser = await puppeteer.launch({ headless: "new" });
   const browser = await puppeteer.launch({
     headless: "new",
-    executablePath: "/usr/bin/chromium-browser",
+    executablePath:
+      "/root/.cache/puppeteer/chrome/linux-137.0.7151.70/chrome-linux64/chrome/chrome/linux-137.0.7151.70/chrome-linux64/chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
