@@ -643,9 +643,10 @@ async function articleFactChecker(article) {
 // BOTS
 async function crawlWebsite(url) {
     // const browser = await puppeteer.launch({ headless: "new" });
+    console.log("Puppeteer executable path:", puppeteer.executablePath());
     const browser = await puppeteer.launch({
         headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox",],
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle2" });
