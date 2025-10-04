@@ -708,8 +708,8 @@ async function articleFactChecker(article: any) {
 async function crawlWebsite(url: any) {
   // const browser = await puppeteer.launch({ headless: "new" });
   const browser = await puppeteer.launch({
-    headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox",],
   });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle2" });
