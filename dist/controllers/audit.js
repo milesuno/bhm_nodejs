@@ -7,7 +7,10 @@ exports.runAudit = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const targetUrl = "https://example.com"; // Replace with your target site
 const runAudit = async (siteUrl) => {
-    const browser = await puppeteer_1.default.launch({ headless: true });
+    const browser = await puppeteer_1.default.launch({
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const context = await browser.createBrowserContext();
     const page = await context.newPage();
     const techPatterns = {

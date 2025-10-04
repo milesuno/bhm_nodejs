@@ -17,8 +17,10 @@ type TechKeys =
   | "oneTrust";
 
 export const runAudit = async (siteUrl: string) => {
-  const browser = await puppeteer.launch({ headless: true });
-  const context = await browser.createBrowserContext();
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });  const context = await browser.createBrowserContext();
   const page = await context.newPage();
 
   const techPatterns: Record<TechKeys, RegExp> = {
