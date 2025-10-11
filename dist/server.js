@@ -555,7 +555,7 @@ async function articleCTAReviewer(article) {
     console.log("OLLAMA RESPONSE - CTA");
     try {
         const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "phi3:14b-medium-128k-instruct-q4_K_S",
+            model: "gemma3:27b-it-q4_K_M",
             prompt: `
       ROLE:
       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
