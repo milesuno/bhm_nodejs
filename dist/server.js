@@ -22,6 +22,7 @@ const puppeteer = require("puppeteer");
 const Article = require("./models/article");
 const WebDoc = require("./models/doc-ref");
 const WebPDFDoc = require("./models/doc-pdf");
+const NewsletterSubscriber = require("./models/newsletter-subscriber");
 app.use(express.json());
 app.use((0, cors_1.default)({
     origin: "https://www.businesshealthmetrics.com", // Change to your frontend domain
@@ -30,7 +31,7 @@ app.use((0, cors_1.default)({
     allowedHeaders: "Content-Type, Authorization",
 }));
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://www.businesshealthmetrics.com");
+    res.header("Access-Control-Allow-Origin", "https://www.businesshealthmetrics.com", "*");
     res.header("Access-Control-Expose-Headers", "x-auth-token");
     next();
 });
@@ -843,6 +844,12 @@ app.post("/recommend", (0, asyncMiddleware_1.default)(async (req, res) => {
     }
     const recommendations = await getRecommendations(article_name);
     res.json({ recommendations });
+}));
+app.post("/newsletter-register", (0, asyncMiddleware_1.default)(async (req, res) => {
+    if (pendingArticle._id == req.params.id)
+        await new NewsletterSubscriber({
+            email: req.email,
+        }).save();
 }));
 // ARTICLE GENERATION
 app.get("/approve/:id", (0, asyncMiddleware_1.default)(async (req, res) => {

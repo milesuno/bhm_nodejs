@@ -19,6 +19,7 @@ const puppeteer = require("puppeteer");
 const Article = require("./models/article");
 const WebDoc = require("./models/doc-ref");
 const WebPDFDoc = require("./models/doc-pdf");
+const NewsletterSubscriber = require("./models/newsletter-subscriber");
 
 app.use(express.json());
 
@@ -34,7 +35,8 @@ app.use(
 app.use((req: any, res: any, next: any) => {
   res.header(
     "Access-Control-Allow-Origin",
-    "https://www.businesshealthmetrics.com"
+    "https://www.businesshealthmetrics.com",
+    "*"
   );
   res.header("Access-Control-Expose-Headers", "x-auth-token");
   next();
@@ -969,6 +971,16 @@ app.post(
 
     const recommendations = await getRecommendations(article_name);
     res.json({ recommendations });
+  })
+);
+
+app.post(
+  "/newsletter-register",
+  asyncMiddleware(async (req: any, res: any) => {
+    if (pendingArticle._id == req.params.id)
+      await new NewsletterSubscriber({
+        email: req.email,
+      }).save();
   })
 );
 
