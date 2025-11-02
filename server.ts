@@ -25,7 +25,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://www.businesshealthmetrics.com", // Change to your frontend domain
+    origin: ["https://www.businesshealthmetrics.com", "https://businesshealthmetrics.com"], // Change to your frontend domain
     credentials: true,
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
@@ -618,7 +618,7 @@ async function articleCTAReviewer(article: any) {
   console.log("OLLAMA RESPONSE - CTA");
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "gemma3:12b-it-q4_K_M",
+      model: "deepseek-r1:14b-qwen-distill-q4_K_M",
       prompt: `
       ROLE:
       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
