@@ -25,7 +25,10 @@ const WebPDFDoc = require("./models/doc-pdf");
 const NewsletterSubscriber = require("./models/newsletter-subscriber");
 app.use(express.json());
 app.use((0, cors_1.default)({
-    origin: ["https://www.businesshealthmetrics.com", "https://businesshealthmetrics.com"], // Change to your frontend domain
+    origin: [
+        "https://www.businesshealthmetrics.com",
+        "https://businesshealthmetrics.com",
+    ], // Change to your frontend domain
     credentials: true,
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
@@ -551,66 +554,48 @@ async function articleReviewer(article) {
         return "An error occurred while reviewing.";
     }
 }
-async function articleCTAReviewer(article) {
-    console.log("OLLAMA RESPONSE - CTA");
-    try {
-        const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-            model: "deepseek-r1:14b-qwen-distill-q4_K_M",
-            prompt: `
-      ROLE:
-      You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
-
-      ALL references to BHM company services MUST has an Business Health Metric CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com".
-      
-      THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#", ETC.
-     
-      ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com".
-      
-      CTA's URL's THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/", "https://www.businessdataconsultants.com" - ONLY USE: "https://www.businesshealthmetrics.com" 
-  
-
-      TASK REQUIREMENTS:
-      ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
-
-      THE FOLLOWING ARE THE ONLY SERVICES Business Health Metrics (BHM) OFFER. 
-      
-      DO NOT USE ANY OTHER URL's OR ANY SERVICES are that not listed below. 
-
-      The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
-      - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
-      - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
-      - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
-      - General Enquiries URL: https://www.businesshealthmetrics.com/contact
-      - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
-      - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
-      
-      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLES:
-      URL Path: "https://www.businesshealthmetrics.com/services"
-      URL Path and Fragment: "https://www.businesshealthmetrics.com/services#consultancy", "https://www.businesshealthmetrics.com/services#retainer", "https://www.businesshealthmetrics.com/services#implementation"
-
-      This is the article to review: ${article}.
-
-      DO NOT Alter Image Descriptions - ONLY change CTA URL's if neccassary. 
-
-      DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary. 
-      
-      
-      Output should follow this format:
-      
-      Review Details
-      
-      Article (with Correct CTA URL's)
-      `,
-            stream: false,
-        });
-        console.log("OLLAMA RESPONSE - CTA", { response });
-        return response.data.response.trim();
-    }
-    catch (error) {
-        console.error("Error:", error);
-        return "An error occurred while reviewing.";
-    }
-}
+// async function articleCTAReviewer(article: any) {
+//   console.log("OLLAMA RESPONSE - CTA");
+//   try {
+//     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
+//       model: "deepseek-r1:14b-qwen-distill-q4_K_M",
+//       prompt: `
+//       ROLE:
+//       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
+//       ALL references to BHM company services MUST has an Business Health Metric CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com".
+//       THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#", ETC.
+//       ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com".
+//       CTA's URL's THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/", "https://www.businessdataconsultants.com" - ONLY USE: "https://www.businesshealthmetrics.com"
+//       TASK REQUIREMENTS:
+//       ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
+//       THE FOLLOWING ARE THE ONLY SERVICES Business Health Metrics (BHM) OFFER.
+//       DO NOT USE ANY OTHER URL's OR ANY SERVICES are that not listed below.
+//       The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services:
+//       - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
+//       - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
+//       - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
+//       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
+//       - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+//       - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+//       USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLES:
+//       URL Path: "https://www.businesshealthmetrics.com/services"
+//       URL Path and Fragment: "https://www.businesshealthmetrics.com/services#consultancy", "https://www.businesshealthmetrics.com/services#retainer", "https://www.businesshealthmetrics.com/services#implementation"
+//       This is the article to review: ${article}.
+//       DO NOT Alter Image Descriptions - ONLY change CTA URL's if neccassary.
+//       DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary.
+//       Output should follow this format:
+//       Review Details
+//       Article (with Correct CTA URL's)
+//       `,
+//       stream: false,
+//     });
+//     console.log("OLLAMA RESPONSE - CTA", { response });
+//     return response.data.response.trim();
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return "An error occurred while reviewing.";
+//   }
+// }
 async function articleFactChecker(article) {
     let MD = 'Markdown Guide Markdown Cheat Sheet A quick reference to the Markdown syntax. Overview This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for basic syntax and extended syntax. Basic Syntax These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements. Element Markdown Syntax Heading # H1 ## H2 ### H3 Bold **bold text** Italic *italicized text* Blockquote > blockquote Ordered List 1. First item 2. Second item 3. Third item Unordered List - First item - Second item - Third item Code `code` Horizontal Rule --- Link [title](https://www.example.com) Image ![alt text](image.jpg) Extended Syntax These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements. Element Markdown Syntax Table | Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text | Fenced Code Block ``` { "firstName": "John", "lastName": "Smith", "age": 25 } ``` Footnote Here\'s a sentence with a footnote. [^1] [^1]: This is the footnote. Heading ID ### My Great Heading {#custom-id} Definition List term : definition Strikethrough ~~The world is flat.~~ Task List - [x] Write the press release - [ ] Update the website - [ ] Contact the media Emoji (see also Copying and Pasting Emoji) That is so funny! :joy: Highlight I need to highlight these ==very important words==. Subscript H~2~O Superscript X^2^';
     try {
@@ -676,18 +661,18 @@ cron.schedule("0 0 * * *", (0, asyncMiddleware_1.default)(async () => {
                 : content?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
-        let review = await articleCTAReviewer(content);
+        // let review = await articleCTAReviewer(content);
         // let review = await articleReviewer(ctaReview);
-        pendingReviewedArticle = {
-            _id: new mongodb_1.ObjectId(),
-            title: review.includes("**Title:**")
-                ? review.split("**Title:**")[1].split("\n\n")[0]
-                : review.split("\n\n")[2],
-            content: review.includes("**Title:**")
-                ? review.split("\n\n").slice(1).join("\n\n")
-                : review.split("\n\n").slice(1).join("\n\n"),
-            creation: Date.now(),
-        };
+        // pendingReviewedArticle = {
+        //   _id: new ObjectId(),
+        //   title: review.includes("**Title:**")
+        //     ? review.split("**Title:**")[1].split("\n\n")[0]
+        //     : review.split("\n\n")[2],
+        //   content: review.includes("**Title:**")
+        //     ? review.split("\n\n").slice(1).join("\n\n")
+        //     : review.split("\n\n").slice(1).join("\n\n"),
+        //   creation: Date.now(),
+        // };
         console.log("[CRON] Running scheduled task at midnight 3", pendingArticle, pendingReviewedArticle, content);
         await sendApprovalEmail(pendingArticle);
     }
@@ -785,22 +770,22 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
                 : article?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
-        let review = await articleCTAReviewer(article);
+        // let review = await articleCTAReviewer(article);
         // let review = await articleReviewer(ctaReview);
-        pendingReviewedArticle = {
-            _id: new mongodb_1.ObjectId(),
-            title: review.includes("**Title:**")
-                ? review.split("**Title:**")[1].split("\n\n")[0]
-                : review.split("\n\n")[2],
-            content: review.includes("**Title:**")
-                ? review.split("\n\n").slice(1).join("\n\n")
-                : review.split("\n\n").slice(1).join("\n\n"),
-            creation: Date.now(),
-        };
-        console.log({ review, article });
+        // pendingReviewedArticle = {
+        //   _id: new ObjectId(),
+        //   title: review.includes("**Title:**")
+        //     ? review.split("**Title:**")[1].split("\n\n")[0]
+        //     : review.split("\n\n")[2],
+        //   content: review.includes("**Title:**")
+        //     ? review.split("\n\n").slice(1).join("\n\n")
+        //     : review.split("\n\n").slice(1).join("\n\n"),
+        //   creation: Date.now(),
+        // };
+        // console.log({ review, article });
         await sendApprovalEmail(pendingArticle);
         // const article = await generateArticleWebMetrics();
-        res.status(200).send({ pendingArticle, review });
+        res.status(200).send({ pendingArticle });
     }
     else {
         const article = await generateArticleWebMetrics(topic);
@@ -815,26 +800,24 @@ app.post("/generate-article", (0, asyncMiddleware_1.default)(async (req, res) =>
                 : article?.split("\n\n").slice(1).join("\n\n"),
             creation: Date.now(),
         };
-        let review = await articleCTAReviewer(article);
+        // let review = await articleCTAReviewer(article);
         // let review = await articleReviewer(ctaReview);
-        pendingReviewedArticle = {
-            _id: new mongodb_1.ObjectId(),
-            title: review.includes("**Title:**")
-                ? review.split("**Title:**")[1].split("\n\n")[0]
-                : review.split("\n\n")[1],
-            content: review.includes("**Title:**")
-                ? review.split("\n\n").slice(1).join("\n\n")
-                : review.split("\n\n").slice(1).join("\n\n"),
-            creation: Date.now(),
-        };
+        // pendingReviewedArticle = {
+        //   _id: new ObjectId(),
+        //   title: review.includes("**Title:**")
+        //     ? review.split("**Title:**")[1].split("\n\n")[0]
+        //     : review.split("\n\n")[1],
+        //   content: review.includes("**Title:**")
+        //     ? review.split("\n\n").slice(1).join("\n\n")
+        //     : review.split("\n\n").slice(1).join("\n\n"),
+        //   creation: Date.now(),
+        // };
         // factCheck = await articleFactChecker(review);
         //Delete?
-        console.log({ review, article });
+        // console.log({ review, article });
         await sendApprovalEmail(pendingArticle);
         // const article = await generateArticleWebMetrics();
-        res
-            .status(200)
-            .send({ pendingArticle, facts: pendingArticle.facts, review });
+        res.status(200).send({ pendingArticle, facts: pendingArticle.facts });
     }
 }));
 app.post("/recommend", (0, asyncMiddleware_1.default)(async (req, res) => {
@@ -881,7 +864,7 @@ app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
     pendingArticle = null;
     pendingReviewedArticle = null;
     const article = await generateArticleWebMetrics();
-    let review = await articleCTAReviewer(article);
+    // let review = await articleCTAReviewer(article);
     // const review = await articleReviewer(ctaReview);
     pendingArticle = {
         _id: new mongodb_1.ObjectId(),
@@ -893,16 +876,16 @@ app.get("/reject", (0, asyncMiddleware_1.default)(async (req, res) => {
             : article?.split("\n\n").slice(1).join("\n\n"),
         creation: Date.now(),
     };
-    pendingReviewedArticle = {
-        _id: new mongodb_1.ObjectId(),
-        title: review.includes("**Title:**")
-            ? review.split("**Title:**")[1].split("\n\n")[0]
-            : review.split("\n\n")[1],
-        content: review.includes("**Title:**")
-            ? review.split("\n\n").slice(1).join("\n\n")
-            : review.split("\n\n").slice(1).join("\n\n"),
-        creation: Date.now(),
-    };
+    // pendingReviewedArticle = {
+    //   _id: new ObjectId(),
+    //   title: review.includes("**Title:**")
+    //     ? review.split("**Title:**")[1].split("\n\n")[0]
+    //     : review.split("\n\n")[1],
+    //   content: review.includes("**Title:**")
+    //     ? review.split("\n\n").slice(1).join("\n\n")
+    //     : review.split("\n\n").slice(1).join("\n\n"),
+    //   creation: Date.now(),
+    // };
     await sendApprovalEmail(pendingArticle);
     res.send("Article rejected. New one sent.");
 }));

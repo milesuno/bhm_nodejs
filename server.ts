@@ -25,7 +25,10 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["https://www.businesshealthmetrics.com", "https://businesshealthmetrics.com"], // Change to your frontend domain
+    origin: [
+      "https://www.businesshealthmetrics.com",
+      "https://businesshealthmetrics.com",
+    ], // Change to your frontend domain
     credentials: true,
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
@@ -614,65 +617,63 @@ async function articleReviewer(article: any) {
   }
 }
 
-async function articleCTAReviewer(article: any) {
-  console.log("OLLAMA RESPONSE - CTA");
-  try {
-    const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "deepseek-r1:14b-qwen-distill-q4_K_M",
-      prompt: `
-      ROLE:
-      You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
+// async function articleCTAReviewer(article: any) {
+//   console.log("OLLAMA RESPONSE - CTA");
+//   try {
+//     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
+//       model: "deepseek-r1:14b-qwen-distill-q4_K_M",
+//       prompt: `
+//       ROLE:
+//       You ONLY JOB is to Ensure Business Health Metrics "Call to Action" Links (CTA Links) in the "Improved Article" using MarkDown - IF there is no CTA included within the Article being reviewed.
 
-      ALL references to BHM company services MUST has an Business Health Metric CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com".
-      
-      THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#", ETC.
-     
-      ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com".
-      
-      CTA's URL's THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/", "https://www.businessdataconsultants.com" - ONLY USE: "https://www.businesshealthmetrics.com" 
-  
+//       ALL references to BHM company services MUST has an Business Health Metric CTA URL that is pre-fixed with "https://www.businesshealthmetrics.com".
 
-      TASK REQUIREMENTS:
-      ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
+//       THEY MUST NOT CONTAIN any placholder URL for example:"PLACEHOLDER LINK", "EXAMPLE LINK", "LINK", "COMPANY LINK", "#", ETC.
 
-      THE FOLLOWING ARE THE ONLY SERVICES Business Health Metrics (BHM) OFFER. 
-      
-      DO NOT USE ANY OTHER URL's OR ANY SERVICES are that not listed below. 
+//       ALL CTA URL's MUST USE "https://www.businesshealthmetrics.com".
 
-      The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services: 
-      - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
-      - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
-      - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
-      - General Enquiries URL: https://www.businesshealthmetrics.com/contact
-      - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
-      - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
-      
-      USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLES:
-      URL Path: "https://www.businesshealthmetrics.com/services"
-      URL Path and Fragment: "https://www.businesshealthmetrics.com/services#consultancy", "https://www.businesshealthmetrics.com/services#retainer", "https://www.businesshealthmetrics.com/services#implementation"
+//       CTA's URL's THEY MUST NOT CONTAIN: "https://www.businessinsightsolutions.com/", "https://www.businessdataconsultants.com" - ONLY USE: "https://www.businesshealthmetrics.com"
 
-      This is the article to review: ${article}.
+//       TASK REQUIREMENTS:
+//       ENSURE that the Article Provided is using the correct "www.businesshealthmetrics.com" URL for the CTA URL link.
 
-      DO NOT Alter Image Descriptions - ONLY change CTA URL's if neccassary. 
+//       THE FOLLOWING ARE THE ONLY SERVICES Business Health Metrics (BHM) OFFER.
 
-      DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary. 
-      
-      
-      Output should follow this format:
-      
-      Review Details
-      
-      Article (with Correct CTA URL's)
-      `,
-      stream: false,
-    });
-    console.log("OLLAMA RESPONSE - CTA", { response });
-    return response.data.response.trim();
-  } catch (error) {
-    console.error("Error:", error);
-    return "An error occurred while reviewing.";
-  }
-}
+//       DO NOT USE ANY OTHER URL's OR ANY SERVICES are that not listed below.
+
+//       The Improved Article should contain Markdown Embedded "Call to Action"  with "www.businesshealthmetrics.com" Links for Business Health Metrics (BHM) services:
+//       - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
+//       - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
+//       - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#retainer
+//       - General Enquiries URL: https://www.businesshealthmetrics.com/contact
+//       - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
+//       - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+
+//       USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLES:
+//       URL Path: "https://www.businesshealthmetrics.com/services"
+//       URL Path and Fragment: "https://www.businesshealthmetrics.com/services#consultancy", "https://www.businesshealthmetrics.com/services#retainer", "https://www.businesshealthmetrics.com/services#implementation"
+
+//       This is the article to review: ${article}.
+
+//       DO NOT Alter Image Descriptions - ONLY change CTA URL's if neccassary.
+
+//       DO NOT Alter the provided Article and its Structure - ONLY change CTA URL's if neccassary.
+
+//       Output should follow this format:
+
+//       Review Details
+
+//       Article (with Correct CTA URL's)
+//       `,
+//       stream: false,
+//     });
+//     console.log("OLLAMA RESPONSE - CTA", { response });
+//     return response.data.response.trim();
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return "An error occurred while reviewing.";
+//   }
+// }
 
 async function articleFactChecker(article: any) {
   let MD =
@@ -758,19 +759,19 @@ cron.schedule(
         creation: Date.now(),
       };
 
-      let review = await articleCTAReviewer(content);
+      // let review = await articleCTAReviewer(content);
       // let review = await articleReviewer(ctaReview);
 
-      pendingReviewedArticle = {
-        _id: new ObjectId(),
-        title: review.includes("**Title:**")
-          ? review.split("**Title:**")[1].split("\n\n")[0]
-          : review.split("\n\n")[2],
-        content: review.includes("**Title:**")
-          ? review.split("\n\n").slice(1).join("\n\n")
-          : review.split("\n\n").slice(1).join("\n\n"),
-        creation: Date.now(),
-      };
+      // pendingReviewedArticle = {
+      //   _id: new ObjectId(),
+      //   title: review.includes("**Title:**")
+      //     ? review.split("**Title:**")[1].split("\n\n")[0]
+      //     : review.split("\n\n")[2],
+      //   content: review.includes("**Title:**")
+      //     ? review.split("\n\n").slice(1).join("\n\n")
+      //     : review.split("\n\n").slice(1).join("\n\n"),
+      //   creation: Date.now(),
+      // };
 
       console.log(
         "[CRON] Running scheduled task at midnight 3",
@@ -902,24 +903,24 @@ app.post(
         creation: Date.now(),
       };
 
-      let review = await articleCTAReviewer(article);
+      // let review = await articleCTAReviewer(article);
       // let review = await articleReviewer(ctaReview);
 
-      pendingReviewedArticle = {
-        _id: new ObjectId(),
-        title: review.includes("**Title:**")
-          ? review.split("**Title:**")[1].split("\n\n")[0]
-          : review.split("\n\n")[2],
-        content: review.includes("**Title:**")
-          ? review.split("\n\n").slice(1).join("\n\n")
-          : review.split("\n\n").slice(1).join("\n\n"),
-        creation: Date.now(),
-      };
+      // pendingReviewedArticle = {
+      //   _id: new ObjectId(),
+      //   title: review.includes("**Title:**")
+      //     ? review.split("**Title:**")[1].split("\n\n")[0]
+      //     : review.split("\n\n")[2],
+      //   content: review.includes("**Title:**")
+      //     ? review.split("\n\n").slice(1).join("\n\n")
+      //     : review.split("\n\n").slice(1).join("\n\n"),
+      //   creation: Date.now(),
+      // };
 
-      console.log({ review, article });
+      // console.log({ review, article });
       await sendApprovalEmail(pendingArticle);
       // const article = await generateArticleWebMetrics();
-      res.status(200).send({ pendingArticle, review });
+      res.status(200).send({ pendingArticle });
     } else {
       const article = await generateArticleWebMetrics(topic);
       promptRef = topic;
@@ -934,29 +935,27 @@ app.post(
         creation: Date.now(),
       };
 
-      let review = await articleCTAReviewer(article);
+      // let review = await articleCTAReviewer(article);
       // let review = await articleReviewer(ctaReview);
 
-      pendingReviewedArticle = {
-        _id: new ObjectId(),
-        title: review.includes("**Title:**")
-          ? review.split("**Title:**")[1].split("\n\n")[0]
-          : review.split("\n\n")[1],
-        content: review.includes("**Title:**")
-          ? review.split("\n\n").slice(1).join("\n\n")
-          : review.split("\n\n").slice(1).join("\n\n"),
-        creation: Date.now(),
-      };
+      // pendingReviewedArticle = {
+      //   _id: new ObjectId(),
+      //   title: review.includes("**Title:**")
+      //     ? review.split("**Title:**")[1].split("\n\n")[0]
+      //     : review.split("\n\n")[1],
+      //   content: review.includes("**Title:**")
+      //     ? review.split("\n\n").slice(1).join("\n\n")
+      //     : review.split("\n\n").slice(1).join("\n\n"),
+      //   creation: Date.now(),
+      // };
 
       // factCheck = await articleFactChecker(review);
       //Delete?
 
-      console.log({ review, article });
+      // console.log({ review, article });
       await sendApprovalEmail(pendingArticle);
       // const article = await generateArticleWebMetrics();
-      res
-        .status(200)
-        .send({ pendingArticle, facts: pendingArticle.facts, review });
+      res.status(200).send({ pendingArticle, facts: pendingArticle.facts });
     }
   })
 );
@@ -1022,7 +1021,7 @@ app.get(
     pendingReviewedArticle = null;
 
     const article = await generateArticleWebMetrics();
-    let review = await articleCTAReviewer(article);
+    // let review = await articleCTAReviewer(article);
     // const review = await articleReviewer(ctaReview);
 
     pendingArticle = {
@@ -1036,16 +1035,16 @@ app.get(
       creation: Date.now(),
     };
 
-    pendingReviewedArticle = {
-      _id: new ObjectId(),
-      title: review.includes("**Title:**")
-        ? review.split("**Title:**")[1].split("\n\n")[0]
-        : review.split("\n\n")[1],
-      content: review.includes("**Title:**")
-        ? review.split("\n\n").slice(1).join("\n\n")
-        : review.split("\n\n").slice(1).join("\n\n"),
-      creation: Date.now(),
-    };
+    // pendingReviewedArticle = {
+    //   _id: new ObjectId(),
+    //   title: review.includes("**Title:**")
+    //     ? review.split("**Title:**")[1].split("\n\n")[0]
+    //     : review.split("\n\n")[1],
+    //   content: review.includes("**Title:**")
+    //     ? review.split("\n\n").slice(1).join("\n\n")
+    //     : review.split("\n\n").slice(1).join("\n\n"),
+    //   creation: Date.now(),
+    // };
 
     await sendApprovalEmail(pendingArticle);
     res.send("Article rejected. New one sent.");
