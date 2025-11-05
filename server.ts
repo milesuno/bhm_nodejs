@@ -550,7 +550,7 @@ async function articleReviewer(article: any) {
   console.log("OLLAMA RESPONSE - REVIEW");
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "granite4:3b-h",
+      model: "gemma3:12b-it-q4_K_M",
       prompt: `
       ROLE:
       You are an Expert Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
@@ -919,7 +919,7 @@ app.post(
         creation: Date.now(),
       };
 
-      console.log({ review, article });
+      console.log({ review, article, pendingReviewedArticle });
       await sendApprovalEmail(pendingArticle);
       // const article = await generateArticleWebMetrics();
       res.status(200).send({ pendingArticle, review });
