@@ -550,7 +550,7 @@ async function articleReviewer(article: any) {
   console.log("OLLAMA RESPONSE - REVIEW");
   try {
     const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: "gemma3:12b-it-q4_K_M",
+      model: "gemma3:27b-it-q4_K_M",
       prompt: `
       ROLE:
       You are an Expert Senior Writer Auditor for Business Health Metrics (BHM) - a Web Analytics Implementation and Consultancy Company. 
