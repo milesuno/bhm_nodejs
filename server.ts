@@ -310,17 +310,17 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   ${MD}
 
 
- The Article should contain Markdown Embedded "Call to Actions" (CTA) URL's Links "www.businesshealthmetrics.com" - for Business Health Metrics (BHM) services: 
-  - Consultancy URL:  https://www.businesshealthmetrics.com/services#consultancy
-  - Implementation URL: https://www.businesshealthmetrics.com/services#implementation
-  - Implementation Retainer URL: https://www.businesshealthmetrics.com/services#ongoing-support
-  - General Enquiries URL: https://www.businesshealthmetrics.com/contact
-  - FREE Web Analytics Tool Scanner URL: https://www.businesshealthmetrics.com/free-website-audit
-  - FREE Data Layer Scanner Analytics URL: https://www.businesshealthmetrics.com/datalayer-scanner
+ The Article should contain Markdown Embedded "Call to Actions" (CTA) URL's Links "www.example.com" - for Business Health Metrics (BHM) services: 
+  - Consultancy URL:  https://www.example.com/services#consultancy
+  - Implementation URL: https://www.example.com/services#implementation
+  - Implementation Retainer URL: https://www.example.com/services#ongoing-support
+  - General Enquiries URL: https://www.example.com/contact
+  - FREE Web Analytics Tool Scanner URL: https://www.example.com/free-website-audit
+  - FREE Data Layer Scanner Analytics URL: https://www.example.com/datalayer-scanner
 
   USE EXACT URL's, EXACT URL PATH's AND URL FRAGMENTS - EXAMPLES:
-  URL Path: "https://www.businesshealthmetrics.com/services"
-  URL Path and Fragment: "https://www.businesshealthmetrics.com/services#consultancy", "https://www.businesshealthmetrics.com/services#ongoing-support", "https://www.businesshealthmetrics.com/services#implementation"
+  URL Path: "https://www.example.com/services"
+  URL Path and Fragment: "https://www.example.com/services#consultancy", "https://www.example.com/services#ongoing-support", "https://www.example.com/services#implementation"
 
   Use examples if required for explaining complex topics.
 
@@ -336,7 +336,7 @@ async function generateArticleWebMetrics(reqPrompt = undefined) {
   
   Main Point image description
   
-  Article Body (with CORRECT CTA's "www.businesshealthmetrics.com"  and CTA URL)
+  Article Body (with CORRECT CTA's "www.example.com"  and CTA URL)
   
   Conclusion
 
