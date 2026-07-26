@@ -11,6 +11,7 @@ services:
 ollama_container:
   ollama:
   image: ollama/ollama
+  pull_policy: always # <--- Add this line
   container_name: ollama_container
   ports:
     - "11434:11434"
